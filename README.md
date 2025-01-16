@@ -1,12 +1,12 @@
 # `feedrattler`
 
+[release-badge]: https://img.shields.io/github/v/release/hadim/feedrattler?logo=github
 [test-badge]: https://github.com/hadim/feedrattler/actions/workflows/test.yaml/badge.svg?branch=main
 [lint-badge]: https://github.com/hadim/feedrattler/actions/workflows/lint.yaml/badge.svg?branch=main
-[release-badge]: https://img.shields.io/github/v/release/hadim/feedrattler?logo=github
 
+[![GitHub Release][release-badge]](https://github.com/hadim/feedrattler/releases)
 [![Test CI][test-badge]](https://github.com/hadim/feedrattler/actions/workflows/test.yaml)
 [![Lint CI][lint-badge]](https://github.com/hadim/feedrattler/actions/workflows/lint.yaml)
-[![GitHub Release][release-badge]](https://github.com/hadim/feedrattler/releases)
 
 Convert conda-forge feedstock to rattler-build.
 
