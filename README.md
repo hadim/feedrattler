@@ -10,6 +10,14 @@ The below command will convert the feedstock https://github.com/conda-forge/my-a
 pixi exec feedrattler my-awesome-package-feedstock gh_user
 ```
 
+The package is also available as a conda package:
+
+```bash
+conda install -c conda-forge feedrattler
+```
+
+## Options
+
 Use `feedrattler --help` to see all available options.
 
 ```bash
