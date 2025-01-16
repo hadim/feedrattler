@@ -1,0 +1,98 @@
+[project]
+name = "feedrattler"
+description = "Convert conda-forge feedstock to rattler-build"
+authors = [{ name = "Hadrien Mary", email = "hadrien.mary@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "pygithub >=2.5",
+    "conda-smithy >=3.45",
+    "ruamel.yaml >=0.18",
+    "gitpython >=3.1",
+    "conda-recipe-manager >=0.4.0",
+    "typer >=0.15",
+    "rich >=13.9",
+    "python-dotenv >=1.0",
+]
+dynamic = ["version", "readme"]
+
+[project.urls]
+homepage = "https://github.com/hadim/feedrattler"
+
+[project.scripts]
+feedrattler = "feedrattler.cli:app"
+
+# Build system - setuptools
+
+[build-system]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["./src/"]
+include = ["feedrattler*"]
+
+[tool.setuptools.dynamic]
+readme = { file = ["README.md"] }
+
+[tool.setuptools_scm]
+
+# Pixi configuration
+
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-64", "osx-arm64", "win-64", "linux-aarch64"]
+
+[tool.pixi.dependencies]
+python = ">=3.11"
+pygithub = ">=2.5"
+conda-smithy = ">=3.45"
+"ruamel.yaml" = ">=0.18"
+gitpython = ">=3.1"
+conda-recipe-manager = ">=0.4.0"
+typer = ">=0.15"
+rich = ">=13.9"
+python-dotenv = ">=1.0"
+
+[tool.pixi.feature.dev.dependencies]
+pip = "*"
+setuptools = ">=64"
+setuptools-scm = ">=8"
+ruff = "*"
+jupyterlab = "*"
+
+[tool.pixi.feature.dev.tasks]
+install = "python -m pip install . --no-deps --no-build-isolation"
+install-dev = { cmd = "python -m pip install -e . --no-deps --no-build-isolation", inputs = [
+    "src/feedrattler/*.py",
+    "pyproject.toml",
+] }
+feedrattler = { cmd = "feedrattler", depends-on = ["install-dev"] }
+format = "ruff format -v"
+lint = "ruff check -v"
+
+[tool.pixi.feature.test.tasks]
+test = { cmd = 'python -m pytest tests/ -vvv', depends-on = ["install-dev"] }
+
+[tool.pixi.feature.test.dependencies]
+pytest = "*"
+
+[tool.pixi.feature.py311.dependencies]
+python = "3.11.*"
+
+[tool.pixi.feature.py312.dependencies]
+python = "3.12.*"
+
+[tool.pixi.environments]
+dev = ["dev", "test", "py311"]
+test-py311 = ["dev", "test", "py311"]
+test-py312 = ["dev", "test", "py312"]

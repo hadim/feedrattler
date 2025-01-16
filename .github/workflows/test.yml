@@ -1,0 +1,48 @@
+name: Test
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["*"]
+  pull_request:
+    branches:
+      - "*"
+      - "!gh-pages"
+  schedule:
+    - cron: "0 4 * * MON"
+
+concurrency:
+  # Cancel previous builds if a new one is triggered.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: ${{ matrix.os }}, py${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-14
+        python-version: ["311", "312"]
+
+    env:
+      PIXI_ENV_NAME: test-py${{ matrix.python-version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: prefix-dev/setup-pixi@v0.8.1
+        with:
+          environments: ${{ env.PIXI_ENV_NAME }}
+          activate-environment: true
+
+      - name: Install package
+        run: pixi run --environment ${{ env.PIXI_ENV_NAME }} install
+
+      - name: Run tests
+        run: pixi run --environment ${{ env.PIXI_ENV_NAME }} test

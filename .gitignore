@@ -169,3 +169,12 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# pixi environments
+.pixi
+*.egg-info
+
+# vscode
+.vscode/
+
+.ruff_cache/
