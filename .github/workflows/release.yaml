@@ -18,7 +18,7 @@ concurrency:
 jobs:
   release:
     name: release
-    runs-on: ubunu-latest
+    runs-on: ubuntu-latest
 
     env:
       PIXI_ENV_NAME: dev
