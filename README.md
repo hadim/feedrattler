@@ -76,3 +76,14 @@ pixi run -e dev test
 # Format code
 pixi run -e dev format
 ```
+
+## Release
+
+The package is **not** released on PyPi but only on conda-forge at <https://github.com/conda-forge/feedrattler-feedstock>.
+
+To cut a new release:
+
+- Trigger [the `release` workflow on the main branch](https://github.com/hadim/feedrattler/actions/workflows/release.yaml).
+- A new GitHub Release will be created with the new version.
+- The conda-forge bot will create a PR to update the [feedstock](https://github.com/conda-forge/feedrattler-feedstock).
+- Once the conda-forge PR merged, the new conda version will be available.

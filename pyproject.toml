@@ -69,6 +69,9 @@ setuptools = ">=64"
 setuptools-scm = ">=8"
 ruff = "*"
 jupyterlab = "*"
+semver = "*"
+git = "*"
+python-build = "*"
 
 [tool.pixi.feature.dev.tasks]
 install = "python -m pip install . --no-deps --no-build-isolation"

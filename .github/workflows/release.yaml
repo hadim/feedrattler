@@ -1,0 +1,119 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: "A valid Semver version string"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "release-${{ github.ref }}"
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: release
+    runs-on: ubunu-latest
+
+    env:
+      PIXI_ENV_NAME: dev
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: prefix-dev/setup-pixi@v0.8.1
+        with:
+          environments: ${{ env.PIXI_ENV_NAME }}
+          activate-environment: true
+
+      # Check if the release string is valid and ok
+
+      - name: Check the version is valid semver
+        run: |
+          RELEASE_VERSION="${{ inputs.release-version }}"
+
+          {
+            pysemver check $RELEASE_VERSION
+          } || {
+            echo "The version '$RELEASE_VERSION' is not a valid Semver version string."
+            echo "Please use a valid semver version string. More details at https://semver.org/"
+            echo "The release process is aborted."
+            exit 1
+          }
+
+      - name: Check the version is higher than the latest one
+        run: |
+          # Retrieve the git tags first
+          git fetch --prune --unshallow --tags &> /dev/null
+
+          RELEASE_VERSION="${{ inputs.release-version }}"
+          LATEST_VERSION=$(git describe --abbrev=0 --tags)
+
+          IS_HIGHER_VERSION=$(pysemver compare $RELEASE_VERSION $LATEST_VERSION)
+
+          if [ "$IS_HIGHER_VERSION" != "1" ]; then
+            echo "The version '$RELEASE_VERSION' is not higher than the latest version '$LATEST_VERSION'."
+            echo "The release process is aborted."
+            exit 1
+          fi
+
+      # Install and check the source code
+
+      - name: Install package
+        env:
+          SETUPTOOLS_SCM_PRETEND_VERSION: ${{ inputs.release-version }}
+        run: pixi run --environment ${{ env.PIXI_ENV_NAME }} install
+
+      - name: Lint source code
+        run: pixi run --environment ${{ env.PIXI_ENV_NAME }} lint
+
+      - name: Run tests
+        run: pixi run --environment ${{ env.PIXI_ENV_NAME }} test
+
+      - name: Build the wheel and sdist
+        env:
+          SETUPTOOLS_SCM_PRETEND_VERSION: ${{ inputs.release-version }}
+        run: python -m build --no-isolation
+
+      # Release logic
+
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          toTag: "main"
+          configuration: ".github/changelog_config.json"
+
+      - name: Configure git
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Create and push git tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Tag the release
+          git tag -a "${{ inputs.release-version }}" -m "Release version ${{ inputs.release-version }}"
+
+          # Checkout the git tag
+          git checkout "${{ inputs.release-version }}"
+
+          # Push the modified changelogs
+          git push origin main
+
+          # Push the tags
+          git push origin "${{ inputs.release-version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.release-version }}
+          body: ${{steps.github_release.outputs.changelog}}
