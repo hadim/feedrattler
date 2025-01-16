@@ -45,6 +45,8 @@ $ feedrattler --help
 
 ## Development
 
+You need to use [pixi](https://pixi.sh).
+
 ```bash
 # Execute feedrattler CLI
 pixi run -e dev feedrattler
