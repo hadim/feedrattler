@@ -72,6 +72,7 @@ jupyterlab = "*"
 semver = "*"
 git = "*"
 python-build = "*"
+pytest = "*"
 
 [tool.pixi.feature.dev.tasks]
 install = "python -m pip install . --no-deps --no-build-isolation"
@@ -82,12 +83,7 @@ install-dev = { cmd = "python -m pip install -e . --no-deps --no-build-isolation
 feedrattler = { cmd = "feedrattler", depends-on = ["install-dev"] }
 format = "ruff format -v"
 lint = "ruff check -v"
-
-[tool.pixi.feature.test.tasks]
 test = { cmd = 'python -m pytest tests/ -vvv', depends-on = ["install-dev"] }
-
-[tool.pixi.feature.test.dependencies]
-pytest = "*"
 
 [tool.pixi.feature.py311.dependencies]
 python = "3.11.*"
@@ -96,6 +92,6 @@ python = "3.11.*"
 python = "3.12.*"
 
 [tool.pixi.environments]
-dev = ["dev", "test", "py311"]
-test-py311 = ["dev", "test", "py311"]
-test-py312 = ["dev", "test", "py312"]
+dev = ["dev", "py311"]
+test-py311 = ["dev", "py311"]
+test-py312 = ["dev", "py312"]
