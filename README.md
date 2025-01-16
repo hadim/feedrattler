@@ -1,10 +1,14 @@
-# feedrattler
+[test]: https://github.com/hadim/feedrattler/actions/workflows/test.yaml/badge.svg?branch=main
+[lint]: https://github.com/hadim/feedrattler/actions/workflows/lint.yaml/badge.svg?branch=main
+[release]: https://img.shields.io/github/v/release/hadim/feedrattler?logo=github
+
+# `feedrattler`
 
 Convert conda-forge feedstock to rattler-build.
 
 ## Usage
 
-The below command will convert the feedstock https://github.com/conda-forge/my-awesome-package-feedstock to a v1 recipe using `rattler-build`. The converted branch will be pushed to the `gh_user` fork of the feedstock (it will be created if it does not exist).
+The below command will convert the feedstock <https://github.com/conda-forge/my-awesome-package-feedstock> to a v1 recipe using `rattler-build`. The converted branch will be pushed to the `gh_user` fork of the feedstock (it will be created if it does not exist).
 
 ```bash
 pixi exec feedrattler my-awesome-package-feedstock gh_user
