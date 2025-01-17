@@ -49,15 +49,11 @@ readme = { file = ["README.md"] }
 
 # Pixi configuration
 
-[tool.pixi.workspace]
-preview = ["pixi-build"]
+[tool.pixi.project]
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-64", "osx-arm64", "win-64", "linux-aarch64"]
 
-[tool.pixi.package]
-
 [tool.pixi.dependencies]
-feedrattler = { path = "." }
 python = ">=3.11"
 pygithub = ">=2.5"
 conda-smithy = ">=3.45"
@@ -80,20 +76,15 @@ python-build = "*"
 pytest = "*"
 
 [tool.pixi.feature.dev.tasks]
-# install = "python -m pip install . --no-deps --no-build-isolation"
-# install-dev = { cmd = "python -m pip install -e . --no-deps --no-build-isolation", inputs = [
-#     "src/feedrattler/*.py",
-#     "pyproject.toml",
-# ] }
-# feedrattler = { cmd = "feedrattler", depends-on = ["install-dev"] }
-# format = "ruff format -v"
-# lint = "ruff check -v"
-# test = { cmd = 'python -m pytest tests/ -vvv', depends-on = ["install-dev"] }
-
-feedrattler = "feedrattler"
+install = "python -m pip install . --no-deps --no-build-isolation"
+install-dev = { cmd = "python -m pip install -e . --no-deps --no-build-isolation", inputs = [
+    "src/feedrattler/*.py",
+    "pyproject.toml",
+] }
+feedrattler = { cmd = "feedrattler", depends-on = ["install-dev"] }
 format = "ruff format -v"
 lint = "ruff check -v"
-test = 'python -m pytest tests/ -vvv'
+test = { cmd = 'python -m pytest tests/ -vvv', depends-on = ["install-dev"] }
 
 [tool.pixi.feature.py311.dependencies]
 python = "3.11.*"
@@ -106,25 +97,72 @@ dev = ["dev", "py311"]
 test-py311 = ["dev", "py311"]
 test-py312 = ["dev", "py312"]
 
-# Pixi build
+# Pixi build - WORK IN PROGRESS
 
-[tool.pixi.package.build]
-backend = { name = "pixi-build-python", version = "*" }
-channels = ["https://prefix.dev/pixi-build-backends", "conda-forge"]
+# [tool.pixi.workspace]
+# preview = ["pixi-build"]
+# channels = ["conda-forge"]
+# platforms = ["linux-64", "osx-64", "osx-arm64", "win-64", "linux-aarch64"]
 
-# The Python package `simple_python` uses `hatchling` as Python build backend
-[tool.pixi.package.host-dependencies]
-pip = "*"
-setuptools = ">=64"
-setuptools-scm = ">=8"
+# [tool.pixi.package]
 
-[tool.pixi.package.run-dependencies]
-python = ">=3.11"
-pygithub = ">=2.5"
-conda-smithy = ">=3.45"
-"ruamel.yaml" = ">=0.18"
-gitpython = ">=3.1"
-conda-recipe-manager = ">=0.4.0"
-typer = ">=0.15"
-rich = ">=13.9"
-python-dotenv = ">=1.0"
+# [tool.pixi.dependencies]
+# feedrattler = { path = "." }
+# python = ">=3.11"
+# pygithub = ">=2.5"
+# conda-smithy = ">=3.45"
+# "ruamel.yaml" = ">=0.18"
+# gitpython = ">=3.1"
+# conda-recipe-manager = ">=0.4.0"
+# typer = ">=0.15"
+# rich = ">=13.9"
+# python-dotenv = ">=1.0"
+
+# [tool.pixi.feature.dev.dependencies]
+# pip = "*"
+# setuptools = ">=64"
+# setuptools-scm = ">=8"
+# ruff = "*"
+# jupyterlab = "*"
+# semver = "*"
+# git = "*"
+# python-build = "*"
+# pytest = "*"
+
+# [tool.pixi.feature.dev.tasks]
+# feedrattler = "feedrattler"
+# format = "ruff format -v"
+# lint = "ruff check -v"
+# test = 'python -m pytest tests/ -vvv'
+
+# [tool.pixi.feature.py311.dependencies]
+# python = "3.11.*"
+
+# [tool.pixi.feature.py312.dependencies]
+# python = "3.12.*"
+
+# [tool.pixi.environments]
+# dev = ["dev", "py311"]
+# test-py311 = ["dev", "py311"]
+# test-py312 = ["dev", "py312"]
+
+# [tool.pixi.package.build]
+# backend = { name = "pixi-build-python", version = "*" }
+# channels = ["https://prefix.dev/pixi-build-backends", "conda-forge"]
+
+# # The Python package `simple_python` uses `hatchling` as Python build backend
+# [tool.pixi.package.host-dependencies]
+# pip = "*"
+# setuptools = ">=64"
+# setuptools-scm = ">=8"
+
+# [tool.pixi.package.run-dependencies]
+# python = ">=3.11"
+# pygithub = ">=2.5"
+# conda-smithy = ">=3.45"
+# "ruamel.yaml" = ">=0.18"
+# gitpython = ">=3.1"
+# conda-recipe-manager = ">=0.4.0"
+# typer = ">=0.15"
+# rich = ">=13.9"
+# python-dotenv = ">=1.0"
