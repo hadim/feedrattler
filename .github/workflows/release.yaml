@@ -67,7 +67,7 @@ jobs:
       - name: Install package
         env:
           SETUPTOOLS_SCM_PRETEND_VERSION: ${{ inputs.release-version }}
-        run: pixi run --environment ${{ env.PIXI_ENV_NAME }} install
+        run: pixi install --environment ${{ env.PIXI_ENV_NAME }}
 
       - name: Lint source code
         run: pixi run --environment ${{ env.PIXI_ENV_NAME }} lint
