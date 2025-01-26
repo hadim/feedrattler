@@ -64,7 +64,7 @@ jobs:
 
       # Install and check the source code
 
-      - name: Install package
+      - name: Build and install package
         env:
           SETUPTOOLS_SCM_PRETEND_VERSION: ${{ inputs.release-version }}
         run: pixi install --environment ${{ env.PIXI_ENV_NAME }}

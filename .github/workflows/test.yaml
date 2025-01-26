@@ -40,7 +40,7 @@ jobs:
           environments: ${{ env.PIXI_ENV_NAME }}
           activate-environment: true
 
-      - name: Build and Install package
+      - name: Build and install package
         run: pixi install --environment ${{ env.PIXI_ENV_NAME }}
 
       - name: Run tests
