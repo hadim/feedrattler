@@ -173,6 +173,8 @@ cython_debug/
 # pixi environments
 .pixi
 *.egg-info
+*.conda
+output
 
 # vscode
 .vscode/
