@@ -100,26 +100,3 @@ def update_python_version_in_tests(yaml_file_path: os.PathLike):
 
     with open(yaml_file_path, "w") as f:
         yaml.dump(data, f)
-
-
-def remove_schema_version(yaml_file_path: os.PathLike):
-    """
-    Loads a YAML file using ruamel, removes the 'schema_version' key if present.
-
-    Args:
-        yaml_file_path: The path to the YAML file.
-    """
-
-    yaml = initialize_yaml()
-
-    logging.info(f"🗑️ Removing `schema_version` from {yaml_file_path}")
-
-    with open(yaml_file_path, "r") as f:
-        data = yaml.load(f)
-
-    if "schema_version" in data:
-        logging.info("🗑️ Found `schema_version` in `recipe.yaml`, removing it")
-        del data["schema_version"]
-
-        with open(yaml_file_path, "w") as f:
-            yaml.dump(data, f)

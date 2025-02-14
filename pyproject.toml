@@ -38,7 +38,7 @@ feedrattler = "feedrattler.cli:app"
 # Build system - setuptools
 
 [build-system]
-requires = ["setuptools>=64", "setuptools-scm>=8"]
+requires = ["setuptools>=75", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
@@ -75,7 +75,7 @@ python-dotenv = ">=1.0"
 
 [tool.pixi.feature.dev.dependencies]
 pip = "*"
-setuptools = ">=64"
+setuptools = ">=75"
 setuptools-scm = ">=8"
 ruff = "*"
 jupyterlab = "*"
@@ -109,7 +109,7 @@ channels = ["https://prefix.dev/pixi-build-backends", "conda-forge"]
 
 [tool.pixi.package.host-dependencies]
 pip = "*"
-setuptools = ">=64"
+setuptools = ">=75"
 setuptools-scm = ">=8"
 
 [tool.pixi.package.run-dependencies]

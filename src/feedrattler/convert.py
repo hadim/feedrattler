@@ -18,7 +18,6 @@ from conda_smithy import configure_feedstock
 from .utils import initialize_yaml
 from .utils import update_python_min_in_recipe
 from .utils import update_python_version_in_tests
-from .utils import remove_schema_version
 
 logger = logging.getLogger(__name__)
 
@@ -153,13 +152,9 @@ def convert_feedstock_to_v1(
     # NOTE: This is a temporary fix until we have an upstream fix.
     update_python_min_in_recipe(recipe_yaml_path)
 
-    # Step fix-2: if noarch=python then add python_min to tests[].python.python_version
+    # Step fix-1: if noarch=python then add python_min to tests[].python.python_version
     # NOTE: This is a temporary fix until we have an upstream fix.
     update_python_version_in_tests(recipe_yaml_path)
-
-    # Step fix-3: remove `schema_version` from `recipe.yaml`
-    # NOTE: This is a temporary fix until we have an upstream fix.
-    remove_schema_version(recipe_yaml_path)
 
     # Step 6: Commit changes
 
