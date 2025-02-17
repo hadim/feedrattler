@@ -40,6 +40,7 @@ def main(
     log_level: str = "INFO",
     github_token: Optional[str] = typer.Option(None, envvar="GITHUB_TOKEN"),
     dotenv: Optional[str] = None,
+    use_ssh: bool = True,
 ):
     load_dotenv(dotenv)
     github_token = os.getenv("GITHUB_TOKEN", github_token)
@@ -64,4 +65,5 @@ def main(
         branch_name=branch_name,
         enable_rerender_logs=enable_rerender_logs,
         do_rerender=rerender,
+        use_ssh=use_ssh,
     )
