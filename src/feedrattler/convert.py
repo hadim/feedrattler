@@ -32,6 +32,7 @@ def convert_feedstock_to_v1(
     branch_name: str = "convert_feedstock_to_v1_recipe_format",
     enable_rerender_logs: bool = False,
     do_rerender: bool = True,
+    use_ssh: bool = True,
 ):
     # Step 0: Initialize
 
@@ -216,8 +217,8 @@ def convert_feedstock_to_v1(
             )
 
     # Step 9: Push changes to the fork
-
-    git_repo.remotes.origin.set_url(fork_repo.clone_url)
+    fork_clone_url = fork_repo.clone_url if use_ssh else fork_repo.ssh_url
+    git_repo.remotes.origin.set_url(fork_clone_url)
     git_repo.remotes.origin.push(refspec=f"{branch_name}:{branch_name}")
     logging.info(f"🚀 Pushed changes to {github_username}/{feedstock_name}:{branch_name}")
 
