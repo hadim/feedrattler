@@ -5,8 +5,8 @@
 [lint-badge]: https://github.com/hadim/feedrattler/actions/workflows/lint.yaml/badge.svg?branch=main
 
 [![GitHub Release][release-badge]](https://github.com/hadim/feedrattler/releases)
-[![Test CI][test-badge]](https://github.com/hadim/feedrattler/actions/workflows/test.yaml)
-[![Lint CI][lint-badge]](https://github.com/hadim/feedrattler/actions/workflows/lint.yaml)
+[![Test CI][test-badge]](https://github.com/hadim/feedrattler/actions/workflows/test.yml)
+[![Lint CI][lint-badge]](https://github.com/hadim/feedrattler/actions/workflows/lint.yml)
 
 Convert conda-forge feedstock to rattler-build.
 
