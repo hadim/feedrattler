@@ -3,14 +3,16 @@ import os
 import tempfile
 import logging
 import pathlib
+import contextlib
 import shutil
+import time
 
 from github import UnknownObjectException
 from git import Repo
 
-
 from conda_recipe_manager.commands.convert import convert_file
 from conda_recipe_manager.commands.utils.types import ExitCode
+from conda_smithy import configure_feedstock
 
 from .utils import initialize_yaml
 from .utils import update_python_min_in_recipe
@@ -177,104 +179,109 @@ def convert_feedstock_to_v1(
     # NOTE: waiting for upstream fix at https://github.com/conda-incubator/conda-recipe-manager/issues/309
     update_python_version_in_tests(recipe_yaml_path)
 
-    # # Step 6: Commit changes
+    # Step 6: Commit changes
 
-    # logging.info("📝 Committing changes")
+    logging.info("📝 Committing changes")
 
-    # commit_message = "Convert to v1 feedstock"
-    # if use_pixi:
-    #     commit_message += " and use pixi as conda install tool"
+    commit_message = "Convert to v1 feedstock"
+    if use_pixi:
+        commit_message += " and use pixi as conda install tool"
 
-    # git_repo = Repo(repo_dir_temp)
+    git_repo = Repo(repo_dir_temp)
 
-    # # Add and commit changes
-    # git_repo.git.add(".")
-    # git_repo.git.commit("-m", commit_message)
+    # Add and commit changes
+    git_repo.git.add(".")
+    git_repo.git.commit("-m", commit_message)
 
-    # # Step 7: Rerender the feedstock
+    # Step 7: Rerender the feedstock
 
-    # if do_rerender:
-    #     logging.info("🔄 Rerendering the feedstock")
-    #     with open(os.devnull, "w") as devnull:
-    #         with (
-    #             contextlib.redirect_stdout(None if enable_rerender_logs else devnull),
-    #             contextlib.redirect_stderr(None if enable_rerender_logs else devnull),
-    #         ):
-    #             configure_feedstock.main(
-    #                 forge_file_directory=repo_dir_temp,
-    #                 forge_yml=None,
-    #                 no_check_uptodate=True,  # NOTE: ok or not?
-    #                 commit=True,
-    #                 exclusive_config_file=None,
-    #                 check=False,
-    #                 temporary_directory=None,
-    #             )
+    if do_rerender:
+        logging.info("🔄 Rerendering the feedstock")
+        with open(os.devnull, "w") as devnull:
+            with (
+                contextlib.redirect_stdout(None if enable_rerender_logs else devnull),
+                contextlib.redirect_stderr(None if enable_rerender_logs else devnull),
+            ):
+                configure_feedstock.main(
+                    forge_file_directory=repo_dir_temp,
+                    forge_yml=None,
+                    no_check_uptodate=True,  # NOTE: ok or not?
+                    commit=True,
+                    exclusive_config_file=None,
+                    check=False,
+                    temporary_directory=None,
+                )
 
-    # # Step 8: Check if the user has a fork of the feedstock, if not create it
+    # Step 8: Check if the user has a fork of the feedstock, if not create it
 
-    # gh_user = gh.get_user(github_username)
-    # try:
-    #     fork_repo = gh_user.get_repo(feedstock_name)
-    # except UnknownObjectException:
-    #     logging.info(f"🔀 Creating fork for {github_username}/{feedstock_name}")
-    #     fork_repo = repo.create_fork()
-    #     time.sleep(2)
+    gh_user = gh.get_user(github_username)
+    try:
+        fork_repo = gh_user.get_repo(feedstock_name)
+    except UnknownObjectException:
+        logging.info(f"🔀 Creating fork for {github_username}/{feedstock_name}")
+        fork_repo = repo.create_fork()
+        time.sleep(2)
 
-    #     # Wait for the fork to be created
-    #     # NOTE: might be overkill...
-    #     max_retries = 30
-    #     for attempt in range(max_retries):
-    #         try:
-    #             gh_user.get_repo(feedstock_name)
-    #             logging.info(f"✅ Fork created successfully on attempt {attempt + 1}")
-    #             break
-    #         except UnknownObjectException:
-    #             logging.info(f"⏳ Waiting for fork creation... attempt {attempt + 1}/{max_retries}")
-    #             time.sleep(2)
-    #     else:
-    #         raise Exception(
-    #             f"❗ Fork creation for {github_username}/{feedstock_name} failed after {max_retries} attempts"
-    #         )
+        # Wait for the fork to be created
+        # NOTE: might be overkill...
+        max_retries = 30
+        for attempt in range(max_retries):
+            try:
+                gh_user.get_repo(feedstock_name)
+                logging.info(f"✅ Fork created successfully on attempt {attempt + 1}")
+                break
+            except UnknownObjectException:
+                logging.info(
+                    f"⏳ Waiting for fork creation... attempt {attempt + 1}/{max_retries}"
+                )
+                time.sleep(2)
+        else:
+            raise Exception(
+                f"❗ Fork creation for {github_username}/{feedstock_name} failed after {max_retries} attempts"
+            )
 
-    # # Step 9: Push changes to the fork
-    # if clone_type == CloneType.ssh:
-    #     fork_clone_url = fork_repo.ssh_url
-    # elif clone_type == CloneType.https:
-    #     fork_clone_url = fork_repo.clone_url
-    # else:
-    #     raise NotImplementedError(f"❗ {clone_type=} is not implemented")
+    # Step 9: Push changes to the fork
+    if clone_type == CloneType.ssh:
+        fork_clone_url = fork_repo.ssh_url
+    elif clone_type == CloneType.https:
+        fork_clone_url = fork_repo.clone_url
+    else:
+        raise NotImplementedError(f"❗ {clone_type=} is not implemented")
 
-    # git_repo.remotes.origin.set_url(fork_clone_url)
-    # git_repo.remotes.origin.push(refspec=branch_name)
-    # logging.info(f"🚀 Pushed changes to {github_username}/{feedstock_name}:{branch_name}")
+    git_repo.remotes.origin.set_url(fork_clone_url)
+    git_repo.remotes.origin.push(refspec=f"{branch_name}:{branch_name}")
+    logging.info(
+        f"🚀 Pushed changes to {github_username}/{feedstock_name}:{branch_name}"
+    )
 
-    # # Step 10: Create a PR to the conda-forge feedstock
+    # Step 10: Create a PR to the conda-forge feedstock
 
-    # pr_title = f"Convert {feedstock_name} to v1 feedstock"
-    # pr_body = (
-    #     "\n---\n"
-    #     f"This PR converts the {feedstock_name} feedstock to a v1 recipe and switch the conda build tool to rattler-build."
-    #     f"\n\nChanges:\n- [x] 📝 Converted `meta.yaml` to `recipe.yaml`"
-    #     f"\n- [x] 🔧 Updated `conda-forge.yml` to use `rattler-build` and `pixi` (optional)"
-    #     f"\n- [x] 🔢 Bumped the build number"
-    #     f"\n- [x] 🐍 Applied temporary fixes for `python_min` and `python_version`"
-    #     f"\n- [x] 🔄 Rerender the feedstock with conda-smithy"
-    # )
+    pr_title = f"Convert {feedstock_name} to v1 feedstock"
+    pr_body = (
+        f"This PR converts {feedstock_name} to a v1 recipe and switch the conda build tool to rattler-build."
+        f"It has been automatically generated with [feedrattler](https://github.com/hadim/feedrattler)."
+        "\n"
+        f"\nChanges:\n- [x] 📝 Converted `meta.yaml` to `recipe.yaml`"
+        f"\n- [x] Used a [personal fork of the feedstock to propose changes](https://conda-forge.org/docs/maintainer/updating_pkgs.html#forking-and-pull-requests)"
+        f"\n- [x] 🔧 Updated `conda-forge.yml` to use `rattler-build` and `pixi` (optional)"
+        f"\n- [x] 🔢 Bumped the build number"
+        f"\n- [x] 🐍 Applied temporary fixes for `python_min` and `python_version`"
+        f"\n- [x] 🔄 Rerender the feedstock with conda-smithy"
+        f"\n- [ ] Ensured the license file is being packaged."
+    )
 
-    # logging.info("Creating a pull request to the conda-forge feedstock")
-    # try:
-    #     pr = repo.create_pull(
-    #         title=pr_title,
-    #         body=pr_body,
-    #         head=f"{github_username}:{branch_name}",
-    #         base="main",
-    #     )
-    #     logging.info(f"Created pull request: {pr.html_url}")
-    # except Exception as e:
-    #     logging.error(f"❗ Failed to create a pull request: {e}")
-    #     pr_url = (
-    #         f"https://github.com/conda-forge/{feedstock_name}/compare/main...{github_username}:{branch_name}"
-    #     )
-    #     logging.info(f"Create a PR manually at {pr_url} 🚀")
-    #     print(f"PR title: {pr_title} 🎉")
-    #     print(f"PR body:\n{pr_body} ✨")
+    logging.info("Creating a pull request to the conda-forge feedstock")
+    try:
+        pr = repo.create_pull(
+            title=pr_title,
+            body=pr_body,
+            head=f"{github_username}:{branch_name}",
+            base="main",
+        )
+        logging.info(f"Created pull request: {pr.html_url}")
+    except Exception as e:
+        logging.error(f"❗ Failed to create a pull request: {e}")
+        pr_url = f"https://github.com/conda-forge/{feedstock_name}/compare/main...{github_username}:{branch_name}"
+        logging.info(f"Create a PR manually at {pr_url} 🚀")
+        print(f"PR title: {pr_title} 🎉")
+        print(f"PR body:\n{pr_body} ✨")
