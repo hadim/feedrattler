@@ -18,6 +18,7 @@ from conda_smithy import configure_feedstock
 from .utils import initialize_yaml
 from .utils import update_python_min_in_recipe
 from .utils import update_python_version_in_tests
+from .utils import CloneType
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,7 @@ def convert_feedstock_to_v1(
     branch_name: str = "convert_feedstock_to_v1_recipe_format",
     enable_rerender_logs: bool = False,
     do_rerender: bool = True,
+    clone_type: CloneType = CloneType.https,
 ):
     # Step 0: Initialize
 
@@ -47,7 +49,9 @@ def convert_feedstock_to_v1(
 
     # Step 1: Check if feedstock is already a v1 feedstock
 
-    logging.info(f"🔍 Checking if {feedstock_name} is already a v1 feedstock with `recipe/recipe.yaml`")
+    logging.info(
+        f"🔍 Checking if {feedstock_name} is already a v1 feedstock with `recipe/recipe.yaml`"
+    )
     try:
         repo.get_contents("recipe/recipe.yaml")
         is_v1_feedstock = True
@@ -55,7 +59,9 @@ def convert_feedstock_to_v1(
         is_v1_feedstock = False
 
     if is_v1_feedstock:
-        raise Exception(f"❗ {feedstock_name} is already a v1 feedstock since `recipe/recipe.yaml` exists.")
+        raise Exception(
+            f"❗ {feedstock_name} is already a v1 feedstock since `recipe/recipe.yaml` exists."
+        )
 
     logging.info(f"✅ {feedstock_name} is not a v1 feedstock.")
 
@@ -86,10 +92,14 @@ def convert_feedstock_to_v1(
     logging.info("🔄 Converting `meta.yaml` to `recipe.yaml`")
     meta_yaml_path = repo_dir_temp / "recipe" / "meta.yaml"
     recipe_yaml_path = repo_dir_temp / "recipe" / "recipe.yaml"
-    result = convert_file(meta_yaml_path, output=recipe_yaml_path, print_output=False, debug=False)
+    result = convert_file(
+        meta_yaml_path, output=recipe_yaml_path, print_output=False, debug=False
+    )
 
     if result.code == ExitCode.RENDER_WARNINGS:
-        warning_msg = f"❗ Warning while converting {meta_yaml_path} to {recipe_yaml_path}"
+        warning_msg = (
+            f"❗ Warning while converting {meta_yaml_path} to {recipe_yaml_path}"
+        )
         # NOTE: not super clean to directly call `_tbl` but it's a quick way to get the error message
         warning_msg += "\n" + str(result.msg_tbl._tbl)
         logging.warning(warning_msg)
@@ -140,7 +150,9 @@ def convert_feedstock_to_v1(
     try:
         build_number = int(build_number_raw) + 1
     except ValueError:
-        raise Exception(f"❗ Failed to bump build number: {build_number_raw} is not an integer")
+        raise Exception(
+            f"❗ Failed to bump build number: {build_number_raw} is not an integer"
+        )
 
     recipe_yaml["build"]["number"] = build_number
 
@@ -208,7 +220,9 @@ def convert_feedstock_to_v1(
                 logging.info(f"✅ Fork created successfully on attempt {attempt + 1}")
                 break
             except UnknownObjectException:
-                logging.info(f"⏳ Waiting for fork creation... attempt {attempt + 1}/{max_retries}")
+                logging.info(
+                    f"⏳ Waiting for fork creation... attempt {attempt + 1}/{max_retries}"
+                )
                 time.sleep(2)
         else:
             raise Exception(
@@ -216,10 +230,17 @@ def convert_feedstock_to_v1(
             )
 
     # Step 9: Push changes to the fork
-
-    git_repo.remotes.origin.set_url(fork_repo.clone_url)
+    if clone_type == CloneType.ssh:
+        fork_clone_url = fork_repo.ssh_url
+    elif clone_type == CloneType.https:
+        fork_clone_url = fork_repo.clone_url
+    else:
+        raise NotImplementedError(f"❗ {clone_type=} is not implemented")
+    git_repo.remotes.origin.set_url(fork_clone_url)
     git_repo.remotes.origin.push(refspec=f"{branch_name}:{branch_name}")
-    logging.info(f"🚀 Pushed changes to {github_username}/{feedstock_name}:{branch_name}")
+    logging.info(
+        f"🚀 Pushed changes to {github_username}/{feedstock_name}:{branch_name}"
+    )
 
     # Step 10: Create a PR to the conda-forge feedstock
 
@@ -234,18 +255,18 @@ def convert_feedstock_to_v1(
         f"\n- [x] 🔄 Rerender the feedstock with conda-smithy"
     )
 
-    # NOTE: the personal token does not allow creating PRs on the c-f GH org.
-    # logging.info("Creating a pull request to the conda-forge feedstock")
-    # pr = repo.create_pull(
-    #     title=pr_title,
-    #     body=pr_body,
-    #     head=f"{github_username}:{branch_name}",
-    #     base="main",
-    # )
-    # logging.info(f"Created pull request: {pr.html_url}")
-
-    # NOTE: for now, we just print the PR URL with title and body
-    pr_url = f"https://github.com/conda-forge/{feedstock_name}/compare/main...{github_username}:{branch_name}"
-    logging.info(f"Create a PR manually at {pr_url} 🚀")
-    print(f"PR title: {pr_title} 🎉")
-    print(f"PR body:\n{pr_body} ✨")
+    logging.info("Creating a pull request to the conda-forge feedstock")
+    try:
+        pr = repo.create_pull(
+            title=pr_title,
+            body=pr_body,
+            head=f"{github_username}:{branch_name}",
+            base="main",
+        )
+        logging.info(f"Created pull request: {pr.html_url}")
+    except Exception as e:
+        logging.error(f"❗ Failed to create a pull request: {e}")
+        pr_url = f"https://github.com/conda-forge/{feedstock_name}/compare/main...{github_username}:{branch_name}"
+        logging.info(f"Create a PR manually at {pr_url} 🚀")
+        print(f"PR title: {pr_title} 🎉")
+        print(f"PR body:\n{pr_body} ✨")

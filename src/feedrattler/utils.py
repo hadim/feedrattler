@@ -1,9 +1,20 @@
+from enum import Enum
+from typing import Optional
 import os
 import logging
+import re
 import ruamel.yaml
+import shutil
+import subprocess
 
 
 logger = logging.getLogger(__name__)
+
+
+class CloneType(str, Enum):
+    auto = "auto"
+    ssh = "ssh"
+    https = "https"
 
 
 def initialize_yaml():
@@ -45,14 +56,20 @@ def update_python_min_in_recipe(yaml_file_path: os.PathLike):
 
     # Update requirements.host
     if "host" in data.get("requirements", {}):
-        data["requirements"]["host"] = [replace_python_min(v) for v in data["requirements"]["host"]]
+        data["requirements"]["host"] = [
+            replace_python_min(v) for v in data["requirements"]["host"]
+        ]
 
     # Update tests[].requirements.run and tests[].python.python_version
     for test in data.get("tests", []):
         if "requirements" in test and "run" in test["requirements"]:
-            test["requirements"]["run"] = [replace_python_min(v) for v in test["requirements"]["run"]]
+            test["requirements"]["run"] = [
+                replace_python_min(v) for v in test["requirements"]["run"]
+            ]
         if "python" in test and "python_version" in test["python"]:
-            test["python"]["python_version"] = replace_python_min(test["python"]["python_version"])
+            test["python"]["python_version"] = replace_python_min(
+                test["python"]["python_version"]
+            )
 
     with open(yaml_file_path, "w") as f:
         yaml.dump(data, f)
@@ -92,11 +109,77 @@ def update_python_version_in_tests(yaml_file_path: os.PathLike):
     # Iterate through each test element
 
     for test_element in tests_section:
-        if isinstance(test_element, ruamel.yaml.CommentedMap) and "python" in test_element:
+        if (
+            isinstance(test_element, ruamel.yaml.CommentedMap)
+            and "python" in test_element
+        ):
             python_section = test_element["python"]
-            if isinstance(python_section, ruamel.yaml.CommentedMap) and "imports" in python_section:
+            if (
+                isinstance(python_section, ruamel.yaml.CommentedMap)
+                and "imports" in python_section
+            ):
                 if "python_version" not in python_section:
                     python_section["python_version"] = r"${{ python_min }}.*"
 
     with open(yaml_file_path, "w") as f:
         yaml.dump(data, f)
+
+
+def token_from_gh_cli(github_username: Optional[str]) -> Optional[str]:
+    if not shutil.which("gh"):
+        return
+    logger.info("🔍 Found gh CLI, trying to get auth token")
+    cmd = ["gh", "auth", "token", "-h", "github.com"]
+    if github_username:
+        cmd.extend(["-u", github_username])
+    proc = subprocess.run(cmd, check=False, capture_output=True, text=True)
+    if proc.returncode != 0:
+        logger.info("⚠️ Failed to get token from gh CLI")
+        return
+    logger.info("🔑 Got token from gh CLI")
+    return proc.stdout.strip()
+
+
+def detect_username_ssh() -> Optional[str]:
+    try:
+        proc = subprocess.run(
+            ["ssh", "ssh://git@github.com"],
+            check=False,
+            capture_output=True,
+            timeout=15,
+        )
+    except subprocess.TimeoutExpired:
+        logger.warning("❗ Timeout while trying to detect GitHub username/SSH access")
+    else:
+        match = re.search(
+            rb"Hi ([^!]+)! You've successfully authenticated", proc.stderr
+        )
+        if match:
+            username = match.group(1).decode()
+            logger.info(f"🔍 Detected GitHub username: {username}")
+            return username
+
+
+def auto_detect_clone_type(github_username: str) -> CloneType:
+    # If gh CLI is available, prefer its settings
+    if shutil.which("gh"):
+        cmd = ["gh", "auth", "status", "-h", "github.com"]
+        proc = subprocess.run(cmd, check=False, capture_output=True, text=True)
+        if proc.returncode == 0:
+            match = re.search(r"Git operations protocol: (\w+)", proc.stdout)
+            if match:
+                git_protocol = match.group(1)
+                logger.info(f"🔍 Detected git_protocol from gh CLI: {git_protocol}")
+                return CloneType(git_protocol)
+        logger.warning("⚠️ Failed to detect git_protocol from gh CLI")
+
+    # If we have SSH access to GitHub, use SSH
+    github_username_ssh = detect_username_ssh()
+    if github_username_ssh:
+        if github_username_ssh != github_username:
+            raise ValueError(
+                f"GitHub username mismatch with SSH: {github_username} != {github_username_ssh}"
+            )
+        return CloneType.ssh
+
+    return CloneType.https
