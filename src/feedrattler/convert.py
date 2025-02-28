@@ -240,6 +240,9 @@ def convert_feedstock_to_v1(
                 f"❗ Fork creation for {github_username}/{feedstock_name} failed after {max_retries} attempts"
             )
 
+    # Let's sleep 2 more seconds before pushing to the fork
+    time.sleep(2)
+
     # Step 9: Push changes to the fork
     if clone_type == CloneType.ssh:
         fork_clone_url = fork_repo.ssh_url
