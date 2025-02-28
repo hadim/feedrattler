@@ -19,7 +19,7 @@ from github import Github
 from dotenv import load_dotenv
 from rich.logging import RichHandler
 
-from .convert import convert_feedstock_to_v1
+from .convert import convert_feedstock_to_v1, CloneType
 
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ app = typer.Typer()
 @app.command()
 def main(
     feedstock_name: str,
-    github_username: str,
+    github_username: Optional[str] = None,
     use_pixi: bool = True,
     local_clone_dir: Optional[str] = None,
     local_clone_dir_force_erase: bool = False,
@@ -40,7 +40,7 @@ def main(
     log_level: str = "INFO",
     github_token: Optional[str] = typer.Option(None, envvar="GITHUB_TOKEN"),
     dotenv: Optional[str] = None,
-    use_ssh: bool = True,
+    clone_type: CloneType = CloneType.auto,
 ):
     load_dotenv(dotenv)
     github_token = os.getenv("GITHUB_TOKEN", github_token)
@@ -65,5 +65,5 @@ def main(
         branch_name=branch_name,
         enable_rerender_logs=enable_rerender_logs,
         do_rerender=rerender,
-        use_ssh=use_ssh,
+        clone_type=clone_type,
     )

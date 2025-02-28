@@ -1,10 +1,13 @@
 from typing import Optional
+from enum import Enum
 import os
 import contextlib
 import tempfile
 import logging
 import pathlib
 import shutil
+import subprocess
+import re
 import time
 
 from github import UnknownObjectException
@@ -22,17 +25,43 @@ from .utils import update_python_version_in_tests
 logger = logging.getLogger(__name__)
 
 
+class CloneType(str, Enum):
+    auto = "auto"
+    ssh = "ssh"
+    https = "https"
+
+
+def detect_username() -> Optional[str]:
+    try:
+        proc = subprocess.run(
+            ["ssh", "ssh://git@github.com"],
+            check=False,
+            capture_output=True,
+            timeout=15,
+        )
+    except subprocess.TimeoutExpired:
+        logger.warning("❗ Timeout while trying to detect GitHub username/SSH access")
+    else:
+        match = re.search(
+            rb"Hi ([^!]+)! You've successfully authenticated", proc.stderr
+        )
+        if match:
+            username = match.group(1).decode()
+            logger.info(f"🔍 Detected GitHub username: {username}")
+            return username
+
+
 def convert_feedstock_to_v1(
     gh,
     feedstock_name: str,
-    github_username: str,
+    github_username: Optional[str],
     use_pixi: bool = False,
     local_clone_dir: Optional[str] = None,
     local_clone_dir_force_erase: bool = False,
     branch_name: str = "convert_feedstock_to_v1_recipe_format",
     enable_rerender_logs: bool = False,
     do_rerender: bool = True,
-    use_ssh: bool = True,
+    clone_type: bool = True,
 ):
     # Step 0: Initialize
 
@@ -45,6 +74,20 @@ def convert_feedstock_to_v1(
 
     org = gh.get_organization("conda-forge")
     repo = org.get_repo(feedstock_name)
+    if github_username is None or clone_type == CloneType.auto:
+        detected_github_username = detect_username()
+        if github_username is None:
+            github_username = detected_github_username
+        if clone_type == CloneType.auto:
+            clone_type = (
+                CloneType.ssh
+                if detected_github_username is not None
+                else CloneType.https
+            )
+    if github_username is None:
+        raise Exception(
+            "❗ github_username is required and auto-detection with SSH failed"
+        )
 
     # Step 1: Check if feedstock is already a v1 feedstock
 
@@ -217,7 +260,14 @@ def convert_feedstock_to_v1(
             )
 
     # Step 9: Push changes to the fork
-    fork_clone_url = fork_repo.clone_url if use_ssh else fork_repo.ssh_url
+    if clone_type == CloneType.auto:
+        use_ssh = "ssh" in [remote.name for remote in git_repo.remotes]
+    elif clone_type == CloneType.ssh:
+        fork_clone_url = fork_repo.ssh_url
+    elif clone_type == CloneType.https:
+        fork_clone_url = fork_repo.clone_url
+    else:
+        raise NotImplementedError(f"❗ {clone_type=} is not implemented")
     git_repo.remotes.origin.set_url(fork_clone_url)
     git_repo.remotes.origin.push(refspec=f"{branch_name}:{branch_name}")
     logging.info(f"🚀 Pushed changes to {github_username}/{feedstock_name}:{branch_name}")
