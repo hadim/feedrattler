@@ -42,36 +42,40 @@ $ feedrattler --help
 
  Usage: feedrattler [OPTIONS] FEEDSTOCK_NAME [GITHUB_USERNAME]
 
-╭─ Arguments ───────────────────────────────────────────────────────────────────────────────╮
-│ *    feedstock_name       TEXT               [default: None] [required]                   │
-│      github_username      [GITHUB_USERNAME]  [default: None]                              │
-╰───────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Options ─────────────────────────────────────────────────────────────────────────────────╮
-│ --use-pixi               --no-use-pixi                             [default: use-pixi]    │
-│ --local-clone-dir                                TEXT              [default: None]        │
-│ --local-clone-dir-fo…    --no-local-clone-di…                      [default:              │
-│                                                                    no-local-clone-dir-fo… │
-│ --branch-name                                    TEXT              [default:              │
-│                                                                    convert_feedstock_to_… │
-│ --rerender               --no-rerender                             [default: rerender]    │
-│ --enable-rerender-lo…    --no-enable-rerende…                      [default:              │
-│                                                                    no-enable-rerender-lo… │
-│ --log-level                                      TEXT              [default: INFO]        │
-│ --github-token                                   TEXT              [env var:              │
-│                                                                    GITHUB_TOKEN]          │
-│                                                                    [default: None]        │
-│ --dotenv                                         TEXT              [default: None]        │
-│ --clone-type                                     [auto|ssh|https]  [default: auto]        │
-│ --install-completion                                               Install completion for │
-│                                                                    the current shell.     │
-│ --show-completion                                                  Show completion for    │
-│                                                                    the current shell, to  │
-│                                                                    copy it or customize   │
-│                                                                    the installation.      │
-│ --help                                                             Show this message and  │
-│                                                                    exit.                  │
-╰───────────────────────────────────────────────────────────────────────────────────────────╯
-
+╭─ Arguments ────────────────────────────────────────────────────────────────────────────────╮
+│ *    feedstock_name       TEXT               [default: None] [required]                    │
+│      github_username      [GITHUB_USERNAME]  [default: None]                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ──────────────────────────────────────────────────────────────────────────────────╮
+│ --use-pixi                --no-use-pixi                             [default: use-pixi]    │
+│ --local-clone-dir                                 TEXT              [default: None]        │
+│ --local-clone-dir-for…    --no-local-clone-di…                      [default:              │
+│                                                                     no-local-clone-dir-fo… │
+│ --git-rev                                         TEXT              The git SHA to clone   │
+│                                                                     the feedstock. The     │
+│                                                                     default branch HEAD is │
+│                                                                     used when None.        │
+│                                                                     [default: None]        │
+│ --branch-name                                     TEXT              [default:              │
+│                                                                     convert_feedstock_to_… │
+│ --rerender                --no-rerender                             [default: rerender]    │
+│ --enable-rerender-logs    --no-enable-rerende…                      [default:              │
+│                                                                     no-enable-rerender-lo… │
+│ --log-level                                       TEXT              [default: INFO]        │
+│ --github-token                                    TEXT              [env var:              │
+│                                                                     GITHUB_TOKEN]          │
+│                                                                     [default: None]        │
+│ --dotenv                                          TEXT              [default: None]        │
+│ --clone-type                                      [auto|ssh|https]  [default: auto]        │
+│ --install-completion                                                Install completion for │
+│                                                                     the current shell.     │
+│ --show-completion                                                   Show completion for    │
+│                                                                     the current shell, to  │
+│                                                                     copy it or customize   │
+│                                                                     the installation.      │
+│ --help                                                              Show this message and  │
+│                                                                     exit.                  │
+╰────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ## Development 🛠️
@@ -82,9 +86,6 @@ You need to use [pixi](https://pixi.sh).
 # Execute feedrattler CLI
 pixi run -e dev feedrattler
 
-# Install package in editable mode
-pixi run -e dev install-dev
-
 # Run tests
 pixi run -e dev test
 
@@ -93,6 +94,9 @@ pixi run -e dev format
 
 # Lint code
 pixi run -e dev lint
+
+# Lint and format code
+pixi run -e dev lint-format
 ```
 
 ## Release 🚢

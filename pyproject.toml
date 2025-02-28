@@ -27,7 +27,7 @@ dependencies = [
 # NOTE: dynamic version does not work well with pixi build
 # dynamic = ["version", "readme"]
 dynamic = ["readme"]
-version = "1.1.1"
+version = "0.2.1"
 
 [project.urls]
 homepage = "https://github.com/hadim/feedrattler"
@@ -62,7 +62,6 @@ platforms = ["linux-64", "osx-64", "osx-arm64", "win-64", "linux-aarch64"]
 # Pixi dependencies and features
 
 [tool.pixi.dependencies]
-feedrattler = { path = "." }
 python = ">=3.11"
 pygithub = ">=2.5"
 conda-smithy = ">=3.45"
@@ -72,6 +71,10 @@ conda-recipe-manager = ">=0.4.0"
 typer = ">=0.15"
 rich = ">=13.9"
 python-dotenv = ">=1.0"
+gh = ">=2.67.0"
+
+[tool.pixi.pypi-dependencies]
+feedrattler = { path = ".", editable = true }
 
 [tool.pixi.feature.dev.dependencies]
 pip = "*"
@@ -86,9 +89,10 @@ pytest = "*"
 
 [tool.pixi.feature.dev.tasks]
 feedrattler = "feedrattler"
-format = "ruff format -v"
-lint = "ruff check -v"
 test = 'python -m pytest tests/ -vvv'
+format = "ruff format -v"
+lint = "ruff check -v --fix"
+lint-format = { depends-on = ["format", "lint"] }
 
 [tool.pixi.feature.py311.dependencies]
 python = "3.11.*"
@@ -96,10 +100,14 @@ python = "3.11.*"
 [tool.pixi.feature.py312.dependencies]
 python = "3.12.*"
 
+[tool.pixi.feature.py313.dependencies]
+python = "3.13.*"
+
 [tool.pixi.environments]
 dev = ["dev", "py311"]
 test-py311 = ["dev", "py311"]
 test-py312 = ["dev", "py312"]
+test-py313 = ["dev", "py313"]
 
 # Pixi build
 
@@ -122,3 +130,4 @@ conda-recipe-manager = ">=0.4.0"
 typer = ">=0.15"
 rich = ">=13.9"
 python-dotenv = ">=1.0"
+gh = ">=2.67.0"

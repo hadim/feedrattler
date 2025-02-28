@@ -1,15 +1,14 @@
 from typing import Optional
 import os
-import contextlib
 import tempfile
 import logging
 import pathlib
+import contextlib
 import shutil
 import time
 
 from github import UnknownObjectException
 from git import Repo
-
 
 from conda_recipe_manager.commands.convert import convert_file
 from conda_recipe_manager.commands.utils.types import ExitCode
@@ -30,6 +29,7 @@ def convert_feedstock_to_v1(
     use_pixi: bool = False,
     local_clone_dir: Optional[str] = None,
     local_clone_dir_force_erase: bool = False,
+    git_rev: Optional[str] = None,
     branch_name: str = "convert_feedstock_to_v1_recipe_format",
     enable_rerender_logs: bool = False,
     do_rerender: bool = True,
@@ -53,7 +53,10 @@ def convert_feedstock_to_v1(
         f"🔍 Checking if {feedstock_name} is already a v1 feedstock with `recipe/recipe.yaml`"
     )
     try:
-        repo.get_contents("recipe/recipe.yaml")
+        if git_rev is not None:
+            repo.get_contents("recipe/recipe.yaml", ref=git_rev)
+        else:
+            repo.get_contents("recipe/recipe.yaml")
         is_v1_feedstock = True
     except UnknownObjectException:
         is_v1_feedstock = False
@@ -68,20 +71,28 @@ def convert_feedstock_to_v1(
     # Step 2: Clone the repository
 
     if local_clone_dir is None:
-        repo_dir_temp = pathlib.Path(tempfile.mkdtemp())
+        repo_dir_temp_parent = pathlib.Path(tempfile.mkdtemp())
     else:
-        repo_dir_temp = pathlib.Path(local_clone_dir)
+        repo_dir_temp_parent = pathlib.Path(local_clone_dir)
 
-        if repo_dir_temp.exists():
+        if repo_dir_temp_parent.exists():
             if local_clone_dir_force_erase:
                 # delete the directory if it already exists
-                logging.info(f"🗑️ Deleting existing directory {repo_dir_temp}")
-                shutil.rmtree(repo_dir_temp)
+                logging.info(f"🗑️ Deleting existing directory {repo_dir_temp_parent}")
+                shutil.rmtree(repo_dir_temp_parent)
             else:
-                raise Exception(f"❗ Directory {repo_dir_temp} already exists")
+                raise Exception(f"❗ Directory {repo_dir_temp_parent} already exists")
+
+    # conda-smithy requires the clone directory to be named after the feedstock
+    repo_dir_temp = repo_dir_temp_parent / feedstock_name
 
     logger.info(f"🔄 Cloning {repo.clone_url} to {repo_dir_temp}")
     git_repo = Repo.clone_from(repo.clone_url, repo_dir_temp)
+
+    # If git_rev is set then checkout the revision
+    if git_rev is not None:
+        logging.info(f"🔄 Checking out git revision {git_rev}")
+        git_repo.git.checkout(git_rev)
 
     # Create a new branch and checkout
     new_branch = git_repo.create_head(branch_name)
@@ -161,11 +172,11 @@ def convert_feedstock_to_v1(
         yaml.dump(recipe_yaml, f)
 
     # Step fix-1: replace `python ${{ python_min }}` by `python ${{ python_min }}.*`
-    # NOTE: This is a temporary fix until we have an upstream fix.
+    # NOTE: waiting for upstream fix at https://github.com/conda-incubator/conda-recipe-manager/issues/308
     update_python_min_in_recipe(recipe_yaml_path)
 
-    # Step fix-1: if noarch=python then add python_min to tests[].python.python_version
-    # NOTE: This is a temporary fix until we have an upstream fix.
+    # Step fix-2: if noarch=python then add python_min to tests[].python.python_version
+    # NOTE: waiting for upstream fix at https://github.com/conda-incubator/conda-recipe-manager/issues/309
     update_python_version_in_tests(recipe_yaml_path)
 
     # Step 6: Commit changes
@@ -229,6 +240,9 @@ def convert_feedstock_to_v1(
                 f"❗ Fork creation for {github_username}/{feedstock_name} failed after {max_retries} attempts"
             )
 
+    # Let's sleep 2 more seconds before pushing to the fork
+    time.sleep(2)
+
     # Step 9: Push changes to the fork
     if clone_type == CloneType.ssh:
         fork_clone_url = fork_repo.ssh_url
@@ -236,6 +250,7 @@ def convert_feedstock_to_v1(
         fork_clone_url = fork_repo.clone_url
     else:
         raise NotImplementedError(f"❗ {clone_type=} is not implemented")
+
     git_repo.remotes.origin.set_url(fork_clone_url)
     git_repo.remotes.origin.push(refspec=f"{branch_name}:{branch_name}")
     logging.info(
@@ -246,13 +261,16 @@ def convert_feedstock_to_v1(
 
     pr_title = f"Convert {feedstock_name} to v1 feedstock"
     pr_body = (
-        "\n---\n"
-        f"This PR converts the {feedstock_name} feedstock to a v1 recipe and switch the conda build tool to rattler-build."
-        f"\n\nChanges:\n- [x] 📝 Converted `meta.yaml` to `recipe.yaml`"
+        f"This PR converts {feedstock_name} to a v1 recipe and switch the conda build tool to rattler-build."
+        f"It has been automatically generated with [feedrattler](https://github.com/hadim/feedrattler)."
+        "\n"
+        f"\nChanges:\n- [x] 📝 Converted `meta.yaml` to `recipe.yaml`"
+        f"\n- [x] Used a [personal fork of the feedstock to propose changes](https://conda-forge.org/docs/maintainer/updating_pkgs.html#forking-and-pull-requests)"
         f"\n- [x] 🔧 Updated `conda-forge.yml` to use `rattler-build` and `pixi` (optional)"
         f"\n- [x] 🔢 Bumped the build number"
         f"\n- [x] 🐍 Applied temporary fixes for `python_min` and `python_version`"
         f"\n- [x] 🔄 Rerender the feedstock with conda-smithy"
+        f"\n- [ ] Ensured the license file is being packaged."
     )
 
     logging.info("Creating a pull request to the conda-forge feedstock")

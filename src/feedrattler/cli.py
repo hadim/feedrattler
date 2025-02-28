@@ -40,6 +40,12 @@ def main(
     use_pixi: bool = True,
     local_clone_dir: Optional[str] = None,
     local_clone_dir_force_erase: bool = False,
+    git_rev: Annotated[
+        Optional[str],
+        typer.Option(
+            help="The git SHA to clone the feedstock. The default branch HEAD is used when None."
+        ),
+    ] = None,
     branch_name: str = "convert_feedstock_to_v1_recipe_format",
     rerender: bool = True,
     enable_rerender_logs: bool = False,
@@ -91,6 +97,7 @@ def main(
         use_pixi=use_pixi,
         local_clone_dir=local_clone_dir,
         local_clone_dir_force_erase=local_clone_dir_force_erase,
+        git_rev=git_rev,
         branch_name=branch_name,
         enable_rerender_logs=enable_rerender_logs,
         do_rerender=rerender,
