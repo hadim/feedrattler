@@ -28,7 +28,7 @@ dependencies = [
 # NOTE: dynamic version does not work well with pixi build
 # dynamic = ["version", "readme"]
 dynamic = ["readme"]
-version = "0.3.0"
+version = "0.3.1"
 
 [project.urls]
 homepage = "https://github.com/hadim/feedrattler"
