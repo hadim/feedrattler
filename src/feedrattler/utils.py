@@ -203,3 +203,16 @@ def remove_empty_script_test(yaml_file_path: os.PathLike):
 
     with open(yaml_file_path, "w") as f:
         yaml.dump(data, f)
+
+
+def add_yaml_schema(yaml_file_path: os.PathLike):
+    """Add the schema to the YAML file."""
+
+    with open(yaml_file_path, "r") as f:
+        content = f.read().splitlines()
+    url = "https://raw.githubusercontent.com/prefix-dev/recipe-format/73cd2eed94c576213c5f25ab57adf6d8c83e792a/schema.json"
+    comment = f"# yaml-language-server: $schema={url}"
+    content.insert(0, comment)
+    with open(yaml_file_path, "w") as f:
+        f.write("\n".join(content) + "\n")
+    logging.info("🔄 Added schema to the recipe file")

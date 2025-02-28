@@ -1,24 +1,26 @@
-from typing import Optional
-import os
-import tempfile
-import logging
-import pathlib
 import contextlib
+import logging
+import os
+import pathlib
 import shutil
+import tempfile
 import time
-
-from github import UnknownObjectException
-from git import Repo
+from typing import Optional
 
 from conda_recipe_manager.commands.convert import convert_file
 from conda_recipe_manager.commands.utils.types import ExitCode
 from conda_smithy import configure_feedstock
+from git import Repo
+from github import UnknownObjectException
 
-from .utils import initialize_yaml
-from .utils import update_python_min_in_recipe
-from .utils import update_python_version_in_tests
-from .utils import remove_empty_script_test
-from .utils import CloneType
+from .utils import (
+    CloneType,
+    add_yaml_schema,
+    initialize_yaml,
+    remove_empty_script_test,
+    update_python_min_in_recipe,
+    update_python_version_in_tests,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -173,6 +175,9 @@ def convert_feedstock_to_v1(
     # fix #3: remove script test if tests[].script does not exist
     # NOTE: waiting for upstream fix at https://github.com/hadim/feedrattler/issues/7
     remove_empty_script_test(recipe_yaml_path)
+
+    # Lastly add the schema as a comment to the top of the recipe.yaml file
+    add_yaml_schema(recipe_yaml_path)
 
     # Step 6: Commit changes
 
