@@ -56,20 +56,14 @@ def update_python_min_in_recipe(yaml_file_path: os.PathLike):
 
     # Update requirements.host
     if "host" in data.get("requirements", {}):
-        data["requirements"]["host"] = [
-            replace_python_min(v) for v in data["requirements"]["host"]
-        ]
+        data["requirements"]["host"] = [replace_python_min(v) for v in data["requirements"]["host"]]
 
     # Update tests[].requirements.run and tests[].python.python_version
     for test in data.get("tests", []):
         if "requirements" in test and "run" in test["requirements"]:
-            test["requirements"]["run"] = [
-                replace_python_min(v) for v in test["requirements"]["run"]
-            ]
+            test["requirements"]["run"] = [replace_python_min(v) for v in test["requirements"]["run"]]
         if "python" in test and "python_version" in test["python"]:
-            test["python"]["python_version"] = replace_python_min(
-                test["python"]["python_version"]
-            )
+            test["python"]["python_version"] = replace_python_min(test["python"]["python_version"])
 
     with open(yaml_file_path, "w") as f:
         yaml.dump(data, f)
@@ -109,15 +103,9 @@ def update_python_version_in_tests(yaml_file_path: os.PathLike):
     # Iterate through each test element
 
     for test_element in tests_section:
-        if (
-            isinstance(test_element, ruamel.yaml.CommentedMap)
-            and "python" in test_element
-        ):
+        if isinstance(test_element, ruamel.yaml.CommentedMap) and "python" in test_element:
             python_section = test_element["python"]
-            if (
-                isinstance(python_section, ruamel.yaml.CommentedMap)
-                and "imports" in python_section
-            ):
+            if isinstance(python_section, ruamel.yaml.CommentedMap) and "imports" in python_section:
                 if "python_version" not in python_section:
                     python_section["python_version"] = r"${{ python_min }}.*"
 
@@ -151,9 +139,7 @@ def detect_username_ssh() -> Optional[str]:
     except subprocess.TimeoutExpired:
         logger.warning("❗ Timeout while trying to detect GitHub username/SSH access")
     else:
-        match = re.search(
-            rb"Hi ([^!]+)! You've successfully authenticated", proc.stderr
-        )
+        match = re.search(rb"Hi ([^!]+)! You've successfully authenticated", proc.stderr)
         if match:
             username = match.group(1).decode()
             logger.info(f"🔍 Detected GitHub username: {username}")
@@ -177,9 +163,43 @@ def auto_detect_clone_type(github_username: str) -> CloneType:
     github_username_ssh = detect_username_ssh()
     if github_username_ssh:
         if github_username_ssh != github_username:
-            raise ValueError(
-                f"GitHub username mismatch with SSH: {github_username} != {github_username_ssh}"
-            )
+            raise ValueError(f"GitHub username mismatch with SSH: {github_username} != {github_username_ssh}")
         return CloneType.ssh
 
     return CloneType.https
+
+
+def remove_empty_script_test(yaml_file_path: os.PathLike):
+    """Remove the test section if it is empty."""
+
+    yaml = initialize_yaml()
+
+    with open(yaml_file_path, "r") as f:
+        data = yaml.load(f)
+
+    # Only proceed if build.noarch is set to python
+    if data.get("build", {}).get("noarch", "") != "python":
+        return
+
+    logging.info("🔄 Remove empty script test section if needed")
+
+    # Handle both SimpleRecipe and ComplexRecipe structures
+    if "tests" in data:
+        tests_section = data["tests"]
+    elif "outputs" in data:
+        tests_section = []
+        for output in data["outputs"]:
+            if "tests" in output:
+                tests_section.extend(output["tests"])
+    else:
+        tests_section = []
+
+    # Iterate through each test element
+
+    for test_element in tests_section:
+        if isinstance(test_element, ruamel.yaml.CommentedMap) and "requirements" in test_element:
+            if "script" not in test_element:
+                tests_section.remove(test_element)
+
+    with open(yaml_file_path, "w") as f:
+        yaml.dump(data, f)

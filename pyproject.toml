@@ -28,7 +28,7 @@ dependencies = [
 # NOTE: dynamic version does not work well with pixi build
 # dynamic = ["version", "readme"]
 dynamic = ["readme"]
-version = "0.3.0"
+version = "0.3.1"
 
 [project.urls]
 homepage = "https://github.com/hadim/feedrattler"
@@ -132,3 +132,18 @@ typer = ">=0.15"
 rich = ">=13.9"
 python-dotenv = ">=1.0"
 gh = ">=2.67.0"
+
+# Ruff
+[tool.ruff]
+line-length = 110
+indent-width = 4
+target-version = "py313"
+
+# Pixi dependency updates
+[tool.pixi-diff-to-markdown]
+merge-dependencies = "no"
+max-expanded-rows = 10
+change-type-column = true
+explicit-column = false
+package-type-column = false
+create-links-for-packages = true

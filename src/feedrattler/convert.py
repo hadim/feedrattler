@@ -17,6 +17,7 @@ from conda_smithy import configure_feedstock
 from .utils import initialize_yaml
 from .utils import update_python_min_in_recipe
 from .utils import update_python_version_in_tests
+from .utils import remove_empty_script_test
 from .utils import CloneType
 
 logger = logging.getLogger(__name__)
@@ -49,9 +50,7 @@ def convert_feedstock_to_v1(
 
     # Step 1: Check if feedstock is already a v1 feedstock
 
-    logging.info(
-        f"🔍 Checking if {feedstock_name} is already a v1 feedstock with `recipe/recipe.yaml`"
-    )
+    logging.info(f"🔍 Checking if {feedstock_name} is already a v1 feedstock with `recipe/recipe.yaml`")
     try:
         if git_rev is not None:
             repo.get_contents("recipe/recipe.yaml", ref=git_rev)
@@ -62,9 +61,7 @@ def convert_feedstock_to_v1(
         is_v1_feedstock = False
 
     if is_v1_feedstock:
-        raise Exception(
-            f"❗ {feedstock_name} is already a v1 feedstock since `recipe/recipe.yaml` exists."
-        )
+        raise Exception(f"❗ {feedstock_name} is already a v1 feedstock since `recipe/recipe.yaml` exists.")
 
     logging.info(f"✅ {feedstock_name} is not a v1 feedstock.")
 
@@ -103,14 +100,10 @@ def convert_feedstock_to_v1(
     logging.info("🔄 Converting `meta.yaml` to `recipe.yaml`")
     meta_yaml_path = repo_dir_temp / "recipe" / "meta.yaml"
     recipe_yaml_path = repo_dir_temp / "recipe" / "recipe.yaml"
-    result = convert_file(
-        meta_yaml_path, output=recipe_yaml_path, print_output=False, debug=False
-    )
+    result = convert_file(meta_yaml_path, output=recipe_yaml_path, print_output=False, debug=False)
 
     if result.code == ExitCode.RENDER_WARNINGS:
-        warning_msg = (
-            f"❗ Warning while converting {meta_yaml_path} to {recipe_yaml_path}"
-        )
+        warning_msg = f"❗ Warning while converting {meta_yaml_path} to {recipe_yaml_path}"
         # NOTE: not super clean to directly call `_tbl` but it's a quick way to get the error message
         warning_msg += "\n" + str(result.msg_tbl._tbl)
         logging.warning(warning_msg)
@@ -161,9 +154,7 @@ def convert_feedstock_to_v1(
     try:
         build_number = int(build_number_raw) + 1
     except ValueError:
-        raise Exception(
-            f"❗ Failed to bump build number: {build_number_raw} is not an integer"
-        )
+        raise Exception(f"❗ Failed to bump build number: {build_number_raw} is not an integer")
 
     recipe_yaml["build"]["number"] = build_number
 
@@ -171,13 +162,17 @@ def convert_feedstock_to_v1(
     with open(recipe_yaml_path, "w") as f:
         yaml.dump(recipe_yaml, f)
 
-    # Step fix-1: replace `python ${{ python_min }}` by `python ${{ python_min }}.*`
+    # fix #1: replace `python ${{ python_min }}` by `python ${{ python_min }}.*`
     # NOTE: waiting for upstream fix at https://github.com/conda-incubator/conda-recipe-manager/issues/308
     update_python_min_in_recipe(recipe_yaml_path)
 
-    # Step fix-2: if noarch=python then add python_min to tests[].python.python_version
+    # fix #2: if noarch=python then add python_min to tests[].python.python_version
     # NOTE: waiting for upstream fix at https://github.com/conda-incubator/conda-recipe-manager/issues/309
     update_python_version_in_tests(recipe_yaml_path)
+
+    # fix #3: remove script test if tests[].script does not exist
+    # NOTE: waiting for upstream fix at https://github.com/hadim/feedrattler/issues/7
+    remove_empty_script_test(recipe_yaml_path)
 
     # Step 6: Commit changes
 
@@ -231,9 +226,7 @@ def convert_feedstock_to_v1(
                 logging.info(f"✅ Fork created successfully on attempt {attempt + 1}")
                 break
             except UnknownObjectException:
-                logging.info(
-                    f"⏳ Waiting for fork creation... attempt {attempt + 1}/{max_retries}"
-                )
+                logging.info(f"⏳ Waiting for fork creation... attempt {attempt + 1}/{max_retries}")
                 time.sleep(2)
         else:
             raise Exception(
@@ -253,9 +246,7 @@ def convert_feedstock_to_v1(
 
     git_repo.remotes.origin.set_url(fork_clone_url)
     git_repo.remotes.origin.push(refspec=f"{branch_name}:{branch_name}")
-    logging.info(
-        f"🚀 Pushed changes to {github_username}/{feedstock_name}:{branch_name}"
-    )
+    logging.info(f"🚀 Pushed changes to {github_username}/{feedstock_name}:{branch_name}")
 
     # Step 10: Create a PR to the conda-forge feedstock
 
@@ -284,7 +275,9 @@ def convert_feedstock_to_v1(
         logging.info(f"Created pull request: {pr.html_url}")
     except Exception as e:
         logging.error(f"❗ Failed to create a pull request: {e}")
-        pr_url = f"https://github.com/conda-forge/{feedstock_name}/compare/main...{github_username}:{branch_name}"
+        pr_url = (
+            f"https://github.com/conda-forge/{feedstock_name}/compare/main...{github_username}:{branch_name}"
+        )
         logging.info(f"Create a PR manually at {pr_url} 🚀")
         print(f"PR title: {pr_title} 🎉")
         print(f"PR body:\n{pr_body} ✨")

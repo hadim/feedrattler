@@ -30,7 +30,7 @@ from .utils import (
 
 logger = logging.getLogger(__name__)
 
-app = typer.Typer()
+app = typer.Typer(no_args_is_help=True)
 
 
 @app.command()
@@ -42,9 +42,7 @@ def main(
     local_clone_dir_force_erase: bool = False,
     git_rev: Annotated[
         Optional[str],
-        typer.Option(
-            help="The git SHA to clone the feedstock. The default branch HEAD is used when None."
-        ),
+        typer.Option(help="The git SHA to clone the feedstock. The default branch HEAD is used when None."),
     ] = None,
     branch_name: str = "convert_feedstock_to_v1_recipe_format",
     rerender: bool = True,
@@ -74,9 +72,7 @@ def main(
         if github_username is None:
             github_username = github_username_api
         if github_username != github_username_api:
-            raise ValueError(
-                f"GitHub username mismatch: {github_username} != {github_username_api}"
-            )
+            raise ValueError(f"GitHub username mismatch: {github_username} != {github_username_api}")
 
     # If we still don't have a username, try to detect it from SSH
     if github_username is None:
