@@ -10,7 +10,6 @@ You need a GH fine-grained token with "Read and Write access to administration a
 """
 
 from typing import Annotated, Optional
-from subprocess import run
 import os
 import logging
 import typer

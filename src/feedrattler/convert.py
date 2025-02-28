@@ -5,7 +5,6 @@ import tempfile
 import logging
 import pathlib
 import shutil
-import subprocess
 import time
 
 from github import UnknownObjectException

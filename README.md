@@ -78,6 +78,9 @@ pixi run -e dev test
 
 # Format code
 pixi run -e dev format
+
+# Lint code
+pixi run -e dev lint
 ```
 
 ## Release 🚢
