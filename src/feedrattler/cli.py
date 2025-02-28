@@ -9,7 +9,8 @@ pixi add python pygithub gitpython typer rich conda-smithy conda-recipe-manager 
 You need a GH fine-grained token with "Read and Write access to administration and code"
 """
 
-from typing import Optional
+from typing import Annotated, Optional
+from subprocess import run
 import os
 import logging
 import typer
@@ -19,7 +20,8 @@ from github import Github
 from dotenv import load_dotenv
 from rich.logging import RichHandler
 
-from .convert import convert_feedstock_to_v1, CloneType
+from .convert import convert_feedstock_to_v1
+from .utils import auto_detect_clone_type, detect_username_ssh, token_from_gh_cli, CloneType
 
 
 logger = logging.getLogger(__name__)
@@ -30,7 +32,7 @@ app = typer.Typer()
 @app.command()
 def main(
     feedstock_name: str,
-    github_username: Optional[str] = None,
+    github_username: Annotated[Optional[str], typer.Argument()] = None,
     use_pixi: bool = True,
     local_clone_dir: Optional[str] = None,
     local_clone_dir_force_erase: bool = False,
@@ -44,6 +46,8 @@ def main(
 ):
     load_dotenv(dotenv)
     github_token = os.getenv("GITHUB_TOKEN", github_token)
+    if not github_token:
+        github_token = token_from_gh_cli(github_username)
 
     FORMAT = "%(message)s"
     logging.basicConfig(
@@ -54,6 +58,27 @@ def main(
     )
 
     gh = Github(login_or_token=github_token)
+    # If we have a token, check if it's valid and corresponds to the username
+    if github_token:
+        github_username_api = gh.get_user().login
+        if github_username is None:
+            github_username = github_username_api
+        if github_username != github_username_api:
+            raise ValueError(
+                f"GitHub username mismatch: {github_username} != {github_username_api}"
+            )
+
+    # If we still don't have a username, try to detect it from SSH
+    if github_username is None:
+        github_username = detect_username_ssh()
+
+    # Automatic detection failed so give up
+    if github_username is None:
+        raise ValueError("GitHub username couldn't be auto detected")
+
+    # If a clone type wasn't specified, try to auto-detect it
+    if clone_type == CloneType.auto:
+        clone_type = auto_detect_clone_type(github_username)
 
     convert_feedstock_to_v1(
         gh=gh,

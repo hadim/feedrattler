@@ -15,8 +15,13 @@ Convert conda-forge feedstock to rattler-build.
 The below command will convert the feedstock `https://github.com/conda-forge/my-awesome-package-feedstock` to a **v1 recipe** using [`rattler-build`](https://rattler.build). The converted branch will be pushed to the **`gh_user` fork** of the feedstock (`https://github.com/gh_user/my-awesome-package-feedstock`) (it will be created if it does not exist).
 
 ```bash
-pixi exec feedrattler my-awesome-package-feedstock gh_user
+pixi exec feedrattler my-awesome-package-feedstock
 ```
+
+Credentials for the github API will either be taken from the `GITHUB_TOKEN` environment variable.
+Alternatively, if you have the official [`gh`](https://cli.github.com/) CLI installed and configured credentials will be taken from there.
+
+If you would rather run without GitHub API access, ensure you already have a fork on the feedstock.
 
 The package is also available as a conda package:
 
@@ -35,37 +40,26 @@ Use `feedrattler --help` to see all available options.
 ```bash
 $ feedrattler --help
 
- Usage: feedrattler [OPTIONS] FEEDSTOCK_NAME GITHUB_USERNAME
+ Usage: feedrattler [OPTIONS] FEEDSTOCK_NAME [GITHUB_USERNAME]
 
-╭─ Arguments ──────────────────────────────────────────────────────────────────╮
-│ *    feedstock_name       TEXT  [default: None] [required]                   │
-│ *    github_username      TEXT  [default: None] [required]                   │
-╰──────────────────────────────────────────────────────────────────────────────╯
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --use-pixi               --no-use-pixi                 [default: use-pixi]   │
-│ --local-clone-dir                                TEXT  [default: None]       │
-│ --local-clone-dir-fo…    --no-local-clone-di…          [default:             │
-│                                                        no-local-clone-dir-f… │
-│ --branch-name                                    TEXT  [default:             │
-│                                                        convert_feedstock_to… │
-│ --rerender               --no-rerender                 [default: rerender]   │
-│ --enable-rerender-lo…    --no-enable-rerende…          [default:             │
-│                                                        no-enable-rerender-l… │
-│ --log-level                                      TEXT  [default: INFO]       │
-│ --github-token                                   TEXT  [env var:             │
-│                                                        GITHUB_TOKEN]         │
-│                                                        [default: None]       │
-│ --dotenv                                         TEXT  [default: None]       │
-│ --install-completion                                   Install completion    │
-│                                                        for the current       │
-│                                                        shell.                │
-│ --show-completion                                      Show completion for   │
-│                                                        the current shell, to │
-│                                                        copy it or customize  │
-│                                                        the installation.     │
-│ --help                                                 Show this message and │
-│                                                        exit.                 │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Arguments ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ *    feedstock_name       TEXT               [default: None] [required]                                                                 │
+│      github_username      [GITHUB_USERNAME]  [default: None]                                                                            │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --use-pixi                       --no-use-pixi                                         [default: use-pixi]                              │
+│ --local-clone-dir                                                    TEXT              [default: None]                                  │
+│ --local-clone-dir-force-erase    --no-local-clone-dir-force-erase                      [default: no-local-clone-dir-force-erase]        │
+│ --branch-name                                                        TEXT              [default: convert_feedstock_to_v1_recipe_format] │
+│ --rerender                       --no-rerender                                         [default: rerender]                              │
+│ --enable-rerender-logs           --no-enable-rerender-logs                             [default: no-enable-rerender-logs]               │
+│ --log-level                                                          TEXT              [default: INFO]                                  │
+│ --github-token                                                       TEXT              [env var: GITHUB_TOKEN] [default: None]          │
+│ --dotenv                                                             TEXT              [default: None]                                  │
+│ --clone-type                                                         [auto|ssh|https]  [default: auto]                                  │
+│ --help                                                                                 Show this message and exit.                      │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
 ```
 
 ## Development 🛠️

@@ -1,9 +1,20 @@
+from enum import Enum
+from typing import Optional
 import os
 import logging
+import re
 import ruamel.yaml
+import shutil
+import subprocess
 
 
 logger = logging.getLogger(__name__)
+
+
+class CloneType(str, Enum):
+    auto = "auto"
+    ssh = "ssh"
+    https = "https"
 
 
 def initialize_yaml():
@@ -100,3 +111,63 @@ def update_python_version_in_tests(yaml_file_path: os.PathLike):
 
     with open(yaml_file_path, "w") as f:
         yaml.dump(data, f)
+
+
+def token_from_gh_cli(github_username: Optional[str]) -> Optional[str]:
+    if not shutil.which("gh"):
+        return
+    logger.info("🔍 Found gh CLI, trying to get auth token")
+    cmd = ["gh", "auth", "token", "-h", "github.com"]
+    if github_username:
+        cmd.extend(["-u", github_username])
+    proc = subprocess.run(cmd, check=False, capture_output=True, text=True)
+    if proc.returncode != 0:
+        logger.info("⚠️ Failed to get token from gh CLI")
+        return
+    logger.info("🔑 Got token from gh CLI")
+    return proc.stdout.strip()
+
+
+def detect_username_ssh() -> Optional[str]:
+    try:
+        proc = subprocess.run(
+            ["ssh", "ssh://git@github.com"],
+            check=False,
+            capture_output=True,
+            timeout=15,
+        )
+    except subprocess.TimeoutExpired:
+        logger.warning("❗ Timeout while trying to detect GitHub username/SSH access")
+    else:
+        match = re.search(
+            rb"Hi ([^!]+)! You've successfully authenticated", proc.stderr
+        )
+        if match:
+            username = match.group(1).decode()
+            logger.info(f"🔍 Detected GitHub username: {username}")
+            return username
+
+
+def auto_detect_clone_type(github_username: str) -> CloneType:
+    # If gh CLI is available, prefer its settings
+    if shutil.which("gh"):
+        cmd = ["gh", "auth", "status", "-h", "github.com"]
+        proc = subprocess.run(cmd, check=False, capture_output=True, text=True)
+        if proc.returncode == 0:
+            match = re.search(r"Git operations protocol: (\w+)", proc.stdout)
+            if match:
+                git_protocol = match.group(1)
+                logger.info(f"🔍 Detected git_protocol from gh CLI: {git_protocol}")
+                return CloneType(git_protocol)
+        logger.warning("⚠️ Failed to detect git_protocol from gh CLI")
+
+    # If we have SSH access to GitHub, use SSH
+    github_username_ssh = detect_username_ssh()
+    if github_username_ssh:
+        if github_username_ssh != github_username:
+            raise ValueError(
+                f"GitHub username mismatch with SSH: {github_username} != {github_username_ssh}"
+            )
+        return CloneType.ssh
+
+    return CloneType.https
