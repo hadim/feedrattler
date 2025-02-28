@@ -12150,8 +12150,8 @@ packages:
   timestamp: 1730967212801
 - pypi: .
   name: feedrattler
-  version: 0.3.0
-  sha256: ece6b64ecbe9fc01bb757787d3347a3ad8955b41a07e5b69198db9eefdc5cd45
+  version: 0.3.1
+  sha256: e21ebc57d75c6f19c173cbf533281c459bc2f3533bb48edf3bb5c9c9ed6eeb1d
   requires_dist:
   - pygithub>=2.5
   - conda-smithy>=3.45
