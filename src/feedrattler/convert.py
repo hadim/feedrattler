@@ -49,7 +49,9 @@ def convert_feedstock_to_v1(
 
     # Step 1: Check if feedstock is already a v1 feedstock
 
-    logging.info(f"🔍 Checking if {feedstock_name} is already a v1 feedstock with `recipe/recipe.yaml`")
+    logging.info(
+        f"🔍 Checking if {feedstock_name} is already a v1 feedstock with `recipe/recipe.yaml`"
+    )
     try:
         repo.get_contents("recipe/recipe.yaml")
         is_v1_feedstock = True
@@ -57,7 +59,9 @@ def convert_feedstock_to_v1(
         is_v1_feedstock = False
 
     if is_v1_feedstock:
-        raise Exception(f"❗ {feedstock_name} is already a v1 feedstock since `recipe/recipe.yaml` exists.")
+        raise Exception(
+            f"❗ {feedstock_name} is already a v1 feedstock since `recipe/recipe.yaml` exists."
+        )
 
     logging.info(f"✅ {feedstock_name} is not a v1 feedstock.")
 
@@ -88,10 +92,14 @@ def convert_feedstock_to_v1(
     logging.info("🔄 Converting `meta.yaml` to `recipe.yaml`")
     meta_yaml_path = repo_dir_temp / "recipe" / "meta.yaml"
     recipe_yaml_path = repo_dir_temp / "recipe" / "recipe.yaml"
-    result = convert_file(meta_yaml_path, output=recipe_yaml_path, print_output=False, debug=False)
+    result = convert_file(
+        meta_yaml_path, output=recipe_yaml_path, print_output=False, debug=False
+    )
 
     if result.code == ExitCode.RENDER_WARNINGS:
-        warning_msg = f"❗ Warning while converting {meta_yaml_path} to {recipe_yaml_path}"
+        warning_msg = (
+            f"❗ Warning while converting {meta_yaml_path} to {recipe_yaml_path}"
+        )
         # NOTE: not super clean to directly call `_tbl` but it's a quick way to get the error message
         warning_msg += "\n" + str(result.msg_tbl._tbl)
         logging.warning(warning_msg)
@@ -142,7 +150,9 @@ def convert_feedstock_to_v1(
     try:
         build_number = int(build_number_raw) + 1
     except ValueError:
-        raise Exception(f"❗ Failed to bump build number: {build_number_raw} is not an integer")
+        raise Exception(
+            f"❗ Failed to bump build number: {build_number_raw} is not an integer"
+        )
 
     recipe_yaml["build"]["number"] = build_number
 
@@ -210,7 +220,9 @@ def convert_feedstock_to_v1(
                 logging.info(f"✅ Fork created successfully on attempt {attempt + 1}")
                 break
             except UnknownObjectException:
-                logging.info(f"⏳ Waiting for fork creation... attempt {attempt + 1}/{max_retries}")
+                logging.info(
+                    f"⏳ Waiting for fork creation... attempt {attempt + 1}/{max_retries}"
+                )
                 time.sleep(2)
         else:
             raise Exception(
@@ -226,7 +238,9 @@ def convert_feedstock_to_v1(
         raise NotImplementedError(f"❗ {clone_type=} is not implemented")
     git_repo.remotes.origin.set_url(fork_clone_url)
     git_repo.remotes.origin.push(refspec=f"{branch_name}:{branch_name}")
-    logging.info(f"🚀 Pushed changes to {github_username}/{feedstock_name}:{branch_name}")
+    logging.info(
+        f"🚀 Pushed changes to {github_username}/{feedstock_name}:{branch_name}"
+    )
 
     # Step 10: Create a PR to the conda-forge feedstock
 

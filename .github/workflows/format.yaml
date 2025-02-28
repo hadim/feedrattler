@@ -1,0 +1,33 @@
+name: Lint
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches:
+      - "*"
+      - "!gh-pages"
+
+concurrency:
+  # Cancel previous builds if a new one is triggered.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: lint
+    runs-on: ubuntu-latest
+
+    env:
+      PIXI_ENV_NAME: dev
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: prefix-dev/setup-pixi@v0.8.1
+        with:
+          environments: ${{ env.PIXI_ENV_NAME }}
+          activate-environment: true
+
+      - name: Lint source code
+        run: pixi run --environment ${{ env.PIXI_ENV_NAME }} format

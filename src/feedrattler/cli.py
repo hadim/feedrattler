@@ -20,7 +20,12 @@ from dotenv import load_dotenv
 from rich.logging import RichHandler
 
 from .convert import convert_feedstock_to_v1
-from .utils import auto_detect_clone_type, detect_username_ssh, token_from_gh_cli, CloneType
+from .utils import (
+    auto_detect_clone_type,
+    detect_username_ssh,
+    token_from_gh_cli,
+    CloneType,
+)
 
 
 logger = logging.getLogger(__name__)
