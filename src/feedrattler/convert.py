@@ -242,18 +242,18 @@ def convert_feedstock_to_v1(
         f"\n- [x] 🔄 Rerender the feedstock with conda-smithy"
     )
 
-    # NOTE: the personal token does not allow creating PRs on the c-f GH org.
-    # logging.info("Creating a pull request to the conda-forge feedstock")
-    # pr = repo.create_pull(
-    #     title=pr_title,
-    #     body=pr_body,
-    #     head=f"{github_username}:{branch_name}",
-    #     base="main",
-    # )
-    # logging.info(f"Created pull request: {pr.html_url}")
-
-    # NOTE: for now, we just print the PR URL with title and body
-    pr_url = f"https://github.com/conda-forge/{feedstock_name}/compare/main...{github_username}:{branch_name}"
-    logging.info(f"Create a PR manually at {pr_url} 🚀")
-    print(f"PR title: {pr_title} 🎉")
-    print(f"PR body:\n{pr_body} ✨")
+    logging.info("Creating a pull request to the conda-forge feedstock")
+    try:
+        pr = repo.create_pull(
+            title=pr_title,
+            body=pr_body,
+            head=f"{github_username}:{branch_name}",
+            base="main",
+        )
+        logging.info(f"Created pull request: {pr.html_url}")
+    except Exception as e:
+        logging.error(f"❗ Failed to create a pull request: {e}")
+        pr_url = f"https://github.com/conda-forge/{feedstock_name}/compare/main...{github_username}:{branch_name}"
+        logging.info(f"Create a PR manually at {pr_url} 🚀")
+        print(f"PR title: {pr_title} 🎉")
+        print(f"PR body:\n{pr_body} ✨")
