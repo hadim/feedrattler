@@ -27,7 +27,7 @@ jobs:
           - ubuntu-latest
           # - windows-latest # disable because it's too slow
           - macos-14
-        python-version: ["311", "312"]
+        python-version: ["311", "312", "313"]
 
     env:
       PIXI_ENV_NAME: test-py${{ matrix.python-version }}
