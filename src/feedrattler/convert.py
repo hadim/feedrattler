@@ -1,11 +1,9 @@
 from typing import Optional
 import os
-import contextlib
 import tempfile
 import logging
 import pathlib
 import shutil
-import time
 
 from github import UnknownObjectException
 from git import Repo
@@ -13,7 +11,6 @@ from git import Repo
 
 from conda_recipe_manager.commands.convert import convert_file
 from conda_recipe_manager.commands.utils.types import ExitCode
-from conda_smithy import configure_feedstock
 
 from .utils import initialize_yaml
 from .utils import update_python_min_in_recipe
@@ -50,7 +47,9 @@ def convert_feedstock_to_v1(
 
     # Step 1: Check if feedstock is already a v1 feedstock
 
-    logging.info(f"🔍 Checking if {feedstock_name} is already a v1 feedstock with `recipe/recipe.yaml`")
+    logging.info(
+        f"🔍 Checking if {feedstock_name} is already a v1 feedstock with `recipe/recipe.yaml`"
+    )
     try:
         if git_rev is not None:
             repo.get_contents("recipe/recipe.yaml", ref=git_rev)
@@ -61,7 +60,9 @@ def convert_feedstock_to_v1(
         is_v1_feedstock = False
 
     if is_v1_feedstock:
-        raise Exception(f"❗ {feedstock_name} is already a v1 feedstock since `recipe/recipe.yaml` exists.")
+        raise Exception(
+            f"❗ {feedstock_name} is already a v1 feedstock since `recipe/recipe.yaml` exists."
+        )
 
     logging.info(f"✅ {feedstock_name} is not a v1 feedstock.")
 
@@ -100,10 +101,14 @@ def convert_feedstock_to_v1(
     logging.info("🔄 Converting `meta.yaml` to `recipe.yaml`")
     meta_yaml_path = repo_dir_temp / "recipe" / "meta.yaml"
     recipe_yaml_path = repo_dir_temp / "recipe" / "recipe.yaml"
-    result = convert_file(meta_yaml_path, output=recipe_yaml_path, print_output=False, debug=False)
+    result = convert_file(
+        meta_yaml_path, output=recipe_yaml_path, print_output=False, debug=False
+    )
 
     if result.code == ExitCode.RENDER_WARNINGS:
-        warning_msg = f"❗ Warning while converting {meta_yaml_path} to {recipe_yaml_path}"
+        warning_msg = (
+            f"❗ Warning while converting {meta_yaml_path} to {recipe_yaml_path}"
+        )
         # NOTE: not super clean to directly call `_tbl` but it's a quick way to get the error message
         warning_msg += "\n" + str(result.msg_tbl._tbl)
         logging.warning(warning_msg)
@@ -154,7 +159,9 @@ def convert_feedstock_to_v1(
     try:
         build_number = int(build_number_raw) + 1
     except ValueError:
-        raise Exception(f"❗ Failed to bump build number: {build_number_raw} is not an integer")
+        raise Exception(
+            f"❗ Failed to bump build number: {build_number_raw} is not an integer"
+        )
 
     recipe_yaml["build"]["number"] = build_number
 
