@@ -1,4 +1,4 @@
-name: Lint
+name: Lint and Format
 
 on:
   push:
@@ -24,10 +24,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: prefix-dev/setup-pixi@v0.8.1
+      - uses: prefix-dev/setup-pixi@v0.8.3
         with:
           environments: ${{ env.PIXI_ENV_NAME }}
           activate-environment: true
 
       - name: Lint source code
         run: pixi run --environment ${{ env.PIXI_ENV_NAME }} lint
+
+      - name: Format source code
+        run: pixi run --environment ${{ env.PIXI_ENV_NAME }} format

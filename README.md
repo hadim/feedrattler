@@ -93,6 +93,9 @@ pixi run -e dev format
 
 # Lint code
 pixi run -e dev lint
+
+# Lint and format code
+pixi run -e dev lint-format
 ```
 
 ## Release 🚢
