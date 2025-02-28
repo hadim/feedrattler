@@ -42,23 +42,35 @@ $ feedrattler --help
 
  Usage: feedrattler [OPTIONS] FEEDSTOCK_NAME [GITHUB_USERNAME]
 
-╭─ Arguments ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ *    feedstock_name       TEXT               [default: None] [required]                                                                 │
-│      github_username      [GITHUB_USERNAME]  [default: None]                                                                            │
-╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Options ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --use-pixi                       --no-use-pixi                                         [default: use-pixi]                              │
-│ --local-clone-dir                                                    TEXT              [default: None]                                  │
-│ --local-clone-dir-force-erase    --no-local-clone-dir-force-erase                      [default: no-local-clone-dir-force-erase]        │
-│ --branch-name                                                        TEXT              [default: convert_feedstock_to_v1_recipe_format] │
-│ --rerender                       --no-rerender                                         [default: rerender]                              │
-│ --enable-rerender-logs           --no-enable-rerender-logs                             [default: no-enable-rerender-logs]               │
-│ --log-level                                                          TEXT              [default: INFO]                                  │
-│ --github-token                                                       TEXT              [env var: GITHUB_TOKEN] [default: None]          │
-│ --dotenv                                                             TEXT              [default: None]                                  │
-│ --clone-type                                                         [auto|ssh|https]  [default: auto]                                  │
-│ --help                                                                                 Show this message and exit.                      │
-╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Arguments ───────────────────────────────────────────────────────────────────────────────╮
+│ *    feedstock_name       TEXT               [default: None] [required]                   │
+│      github_username      [GITHUB_USERNAME]  [default: None]                              │
+╰───────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ─────────────────────────────────────────────────────────────────────────────────╮
+│ --use-pixi               --no-use-pixi                             [default: use-pixi]    │
+│ --local-clone-dir                                TEXT              [default: None]        │
+│ --local-clone-dir-fo…    --no-local-clone-di…                      [default:              │
+│                                                                    no-local-clone-dir-fo… │
+│ --branch-name                                    TEXT              [default:              │
+│                                                                    convert_feedstock_to_… │
+│ --rerender               --no-rerender                             [default: rerender]    │
+│ --enable-rerender-lo…    --no-enable-rerende…                      [default:              │
+│                                                                    no-enable-rerender-lo… │
+│ --log-level                                      TEXT              [default: INFO]        │
+│ --github-token                                   TEXT              [env var:              │
+│                                                                    GITHUB_TOKEN]          │
+│                                                                    [default: None]        │
+│ --dotenv                                         TEXT              [default: None]        │
+│ --clone-type                                     [auto|ssh|https]  [default: auto]        │
+│ --install-completion                                               Install completion for │
+│                                                                    the current shell.     │
+│ --show-completion                                                  Show completion for    │
+│                                                                    the current shell, to  │
+│                                                                    copy it or customize   │
+│                                                                    the installation.      │
+│ --help                                                             Show this message and  │
+│                                                                    exit.                  │
+╰───────────────────────────────────────────────────────────────────────────────────────────╯
 
 ```
 
