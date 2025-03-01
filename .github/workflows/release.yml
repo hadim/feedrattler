@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   release:
-    name: release
+    name: release-${{ github.event.inputs.release-version }}
     runs-on: ubuntu-latest
 
     steps:
