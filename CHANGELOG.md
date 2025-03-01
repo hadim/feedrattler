@@ -1,3 +1,10 @@
+## [0.3.6] - 2025-03-01
+
+### 🐛 Fixed
+
+- Fix wrong version during install by @hadim in [#18](https://github.com/hadim/feedrattler/pull/18)
+
+
 ## [0.3.5] - 2025-03-01
 
 ### ⚙️ Infra
