@@ -22,6 +22,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - uses: prefix-dev/setup-pixi@v0.8.3
         with:
@@ -44,9 +47,6 @@ jobs:
 
       - name: Check the version is higher than the latest one
         run: |
-          # Retrieve the git tags first
-          git fetch --prune --unshallow --tags &> /dev/null
-
           RELEASE_VERSION="${{ inputs.release-version }}"
           LATEST_VERSION=$(git describe --abbrev=0 --tags)
 
@@ -69,45 +69,38 @@ jobs:
         run: pixi run lint-format
 
       - name: Run tests
-        run: pixi run test
+        run: pixi run tests
 
       # Release logic
 
-      - name: Build Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate a changelog
+        uses: orhun/git-cliff-action@v4
+        id: git-cliff
         with:
-          toTag: "main"
-          configuration: ".github/changelog_config.json"
+          config: cliff.toml
+          args: --verbose --unreleased --prepend CHANGELOG.md --tag ${{ inputs.release-version }}
+
+      - name: Print the changelog
+        run: cat "${{ steps.git-cliff.outputs.changelog }}"
 
       - name: Configure git
         run: |
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
-      - name: Create and push git tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit the changelog
         run: |
-          # Sync with remote
-          git pull origin main
-
-          # Tag the release
-          git tag -a "${{ inputs.release-version }}" -m "Release version ${{ inputs.release-version }}"
-
-          # Checkout the git tag
-          git checkout "${{ inputs.release-version }}"
-
-          # Push the modified changelogs
+          git add CHANGELOG.md
+          git commit -m "Update changelog for ${{ inputs.release-version }}"
           git push origin main
 
-          # Push the tags
+      - name: Create and push git tag
+        run: |
+          git tag -a "${{ inputs.release-version }}" -m "Release version ${{ inputs.release-version }}"
           git push origin "${{ inputs.release-version }}"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.release-version }}
-          body: ${{steps.github_release.outputs.changelog}}
+          body: ${{ steps.git-cliff.outputs.content }}
