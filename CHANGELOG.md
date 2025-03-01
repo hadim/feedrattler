@@ -1,3 +1,20 @@
+## [0.3.5] - 2025-03-01
+
+### ⚙️ Infra
+
+- Ci name by @hadim
+- Badges by @hadim
+- Minor config tweaks by @hadim
+
+### ✨ Added
+
+- Add `--version` to the cli by @hadim in [#17](https://github.com/hadim/feedrattler/pull/17)
+
+### 📦 Changed
+
+- Merge branch 'main' of https://github.com/hadim/feedrattler by @hadim
+
+
 ## [0.3.4] - 2025-03-01
 
 ### ⚙️ Infra
