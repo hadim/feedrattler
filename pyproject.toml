@@ -14,21 +14,12 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
 requires-python = ">=3.11"
-dependencies = [
-    "pygithub >=2.5",
-    "conda-smithy >=3.45",
-    "ruamel.yaml >=0.18",
-    "gitpython >=3.1",
-    "conda-recipe-manager >=0.4.0",
-    "typer >=0.15",
-    "rich >=13.9",
-    "python-dotenv >=1.0",
-]
+dependencies = []
 
 # NOTE: dynamic version does not work with pixi build
 # dynamic = ["version", "readme"]
 dynamic = ["readme"]
-version = "0.3.1"
+version = "0.0.0-dev"
 
 [project.urls]
 homepage = "https://github.com/hadim/feedrattler"
