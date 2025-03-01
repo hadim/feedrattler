@@ -87,7 +87,7 @@ You need to use [pixi](https://pixi.sh).
 pixi run feedrattler
 
 # Run tests
-pixi run test
+pixi run tests
 
 # Format code
 pixi run format

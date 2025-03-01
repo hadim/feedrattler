@@ -44,4 +44,4 @@ jobs:
         run: pixi install --environment ${{ env.PIXI_ENV_NAME }}
 
       - name: Run tests
-        run: pixi run --environment ${{ env.PIXI_ENV_NAME }} test
+        run: pixi run --environment ${{ env.PIXI_ENV_NAME }} tests
