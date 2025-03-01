@@ -1,3 +1,20 @@
+## [0.3.4] - 2025-03-01
+
+### ⚙️ Infra
+
+- Update lock files by @hadim
+- Sort imports by @hadim
+- Release process again by @hadim
+
+### 📦 Changed
+
+- Merge branch 'main' of https://github.com/hadim/feedrattler by @hadim
+
+### 🔥 Removed
+
+- Remove verbose for lint and format commands by @hadim
+
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
