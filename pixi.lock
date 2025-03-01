@@ -10481,7 +10481,7 @@ packages:
   timestamp: 1730967212801
 - conda: .
   name: feedrattler
-  version: 0.0.0.dev0
+  version: 0.0.0-dev
   build: pyhbf21a9e_0
   subdir: noarch
   depends:
@@ -10497,7 +10497,7 @@ packages:
   - gh >=2.67.0
   - python
   input:
-    hash: c32527e0ced35a85e59612e89b4145fe81c3fcceaa09ef5a3cb67bb6ecba1612
+    hash: 02281b45cd0cd806fc6405c5fad1fbf9c385b0bb39d25931d39dede1079ce939
     globs:
     - pyproject.toml
 - conda: https://conda.anaconda.org/conda-forge/noarch/filelock-3.17.0-pyhd8ed1ab_0.conda
