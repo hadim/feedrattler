@@ -98,8 +98,8 @@ git = "*"
 [tool.pixi.feature.dev.tasks]
 feedrattler = "feedrattler"
 tests = 'python -m pytest tests/ -vvv'
-format = "ruff format -v"
-lint = "ruff check -v --fix"
+format = "ruff format"
+lint = "ruff check --fix"
 lint-format = { depends-on = ["format", "lint"] }
 
 [tool.pixi.feature.py311.dependencies]
