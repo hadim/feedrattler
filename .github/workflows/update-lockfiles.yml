@@ -34,6 +34,6 @@ jobs:
           body-path: diff.md
           branch: update-pixi
           base: main
-          labels: pixi
+          labels: pixi,chore
           delete-branch: true
           add-paths: pixi.lock
