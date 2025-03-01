@@ -78,7 +78,7 @@ jobs:
         id: git-cliff
         with:
           config: cliff.toml
-          args: --verbose --unreleased --prepend CHANGELOG.md --tag ${{ inputs.release-version }}
+          args: --verbose --unreleased --strip header --prepend CHANGELOG.md --tag ${{ inputs.release-version }}
 
       - name: Print the changelog
         run: cat "${{ steps.git-cliff.outputs.changelog }}"
