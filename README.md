@@ -109,3 +109,6 @@ To cut a new release:
 - A new GitHub Release will be created with the new version.
 - The conda-forge bot will create a PR to update the [feedstock](https://github.com/conda-forge/feedrattler-feedstock).
 - Once the conda-forge PR merged, the new conda version will be available.
+
+
+<!--- dummy edit --->
