@@ -37,9 +37,7 @@ jobs:
 
             Details:
 
-            ```
             ${{ steps.lint-pr-title.outputs.error_message }}
-            ```
 
       # Delete a previous comment when the issue has been resolved
       - if: ${{ steps.lint-pr-title.outputs.error_message == null }}
