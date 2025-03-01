@@ -31,6 +31,22 @@ logger = logging.getLogger(__name__)
 app = typer.Typer(no_args_is_help=True)
 
 
+def version_callback(value: bool):
+    if value:
+        from . import __version__
+
+        typer.echo(f"feedrattler {__version__}")
+        raise typer.Exit()
+
+
+@app.callback()
+def common(
+    ctx: typer.Context,
+    version: bool = typer.Option(None, "--version", callback=version_callback),
+):
+    pass
+
+
 @app.command()
 def main(
     feedstock_name: str,
