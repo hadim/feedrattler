@@ -8,7 +8,7 @@
 [![Test CI][test-badge]](https://github.com/hadim/feedrattler/actions/workflows/test.yml)
 [![Lint CI][lint-badge]](https://github.com/hadim/feedrattler/actions/workflows/lint.yml)
 
-Convert conda-forge feedstock to rattler-build.
+Convert conda-forge feedstock to rattler-build. TEST
 
 ## Usage 🚀
 
