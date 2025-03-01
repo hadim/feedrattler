@@ -20,15 +20,11 @@ jobs:
     name: release
     runs-on: ubuntu-latest
 
-    env:
-      PIXI_ENV_NAME: dev
-
     steps:
       - uses: actions/checkout@v4
 
       - uses: prefix-dev/setup-pixi@v0.8.3
         with:
-          environments: ${{ env.PIXI_ENV_NAME }}
           activate-environment: true
 
       # Check if the release string is valid and ok
@@ -67,18 +63,13 @@ jobs:
       - name: Build and install package
         env:
           SETUPTOOLS_SCM_PRETEND_VERSION: ${{ inputs.release-version }}
-        run: pixi install --environment ${{ env.PIXI_ENV_NAME }}
+        run: pixi install
 
       - name: Lint source code
-        run: pixi run --environment ${{ env.PIXI_ENV_NAME }} lint
+        run: pixi run lint-format
 
       - name: Run tests
-        run: pixi run --environment ${{ env.PIXI_ENV_NAME }} test
-
-      - name: Build the wheel and sdist
-        env:
-          SETUPTOOLS_SCM_PRETEND_VERSION: ${{ inputs.release-version }}
-        run: python -m build --no-isolation
+        run: pixi run test
 
       # Release logic
 
