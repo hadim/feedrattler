@@ -1,12 +1,12 @@
-from enum import Enum
-from typing import Optional
-import os
 import logging
+import os
 import re
-import ruamel.yaml
 import shutil
 import subprocess
+from enum import Enum
+from typing import Optional
 
+import ruamel.yaml
 
 logger = logging.getLogger(__name__)
 

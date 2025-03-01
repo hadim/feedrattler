@@ -1,24 +1,25 @@
-from typing import Optional
-import os
-import tempfile
-import logging
-import pathlib
 import contextlib
+import logging
+import os
+import pathlib
 import shutil
+import tempfile
 import time
-
-from github import UnknownObjectException
-from git import Repo
+from typing import Optional
 
 from conda_recipe_manager.commands.convert import convert_file
 from conda_recipe_manager.commands.utils.types import ExitCode
 from conda_smithy import configure_feedstock
+from git import Repo
+from github import UnknownObjectException
 
-from .utils import initialize_yaml
-from .utils import update_python_min_in_recipe
-from .utils import update_python_version_in_tests
-from .utils import remove_empty_script_test
-from .utils import CloneType
+from .utils import (
+    CloneType,
+    initialize_yaml,
+    remove_empty_script_test,
+    update_python_min_in_recipe,
+    update_python_version_in_tests,
+)
 
 logger = logging.getLogger(__name__)
 

@@ -9,24 +9,22 @@ pixi add python pygithub gitpython typer rich conda-smithy conda-recipe-manager 
 You need a GH fine-grained token with "Read and Write access to administration and code"
 """
 
-from typing import Annotated, Optional
-import os
 import logging
+import os
+from typing import Annotated, Optional
+
 import typer
-
-from github import Github
-
 from dotenv import load_dotenv
+from github import Github
 from rich.logging import RichHandler
 
 from .convert import convert_feedstock_to_v1
 from .utils import (
+    CloneType,
     auto_detect_clone_type,
     detect_username_ssh,
     token_from_gh_cli,
-    CloneType,
 )
-
 
 logger = logging.getLogger(__name__)
 

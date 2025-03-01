@@ -84,9 +84,8 @@ python-dotenv = ">=1.0"
 gh = ">=2.67.0"
 
 [tool.pixi.dependencies]
+# feedrattler
 feedrattler = { path = "." }
-
-[tool.pixi.feature.dev.dependencies]
 # dev tools
 ruff = "*"
 jupyterlab = "*"
@@ -95,7 +94,7 @@ pytest = "*"
 semver = "*"
 git = "*"
 
-[tool.pixi.feature.dev.tasks]
+[tool.pixi.tasks]
 feedrattler = "feedrattler"
 tests = 'python -m pytest tests/ -vvv'
 format = "ruff format"
@@ -112,16 +111,16 @@ python = "3.12.*"
 python = "3.13.*"
 
 [tool.pixi.environments]
-default = ["dev", "py311"]
-test-py311 = ["dev", "py311"]
-test-py312 = ["dev", "py312"]
-test-py313 = ["dev", "py313"]
+test-py311 = ["py311"]
+test-py312 = ["py312"]
+test-py313 = ["py313"]
 
 # Ruff
 [tool.ruff]
 line-length = 110
 indent-width = 4
 target-version = "py313"
+lint.extend-select = ["I"] # sort imports
 
 # Pixi dependency updates
 [tool.pixi-diff-to-markdown]
