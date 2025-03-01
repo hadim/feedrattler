@@ -97,7 +97,7 @@ git = "*"
 
 [tool.pixi.feature.dev.tasks]
 feedrattler = "feedrattler"
-test = 'python -m pytest tests/ -vvv'
+tests = 'python -m pytest tests/ -vvv'
 format = "ruff format -v"
 lint = "ruff check -v --fix"
 lint-format = { depends-on = ["format", "lint"] }
