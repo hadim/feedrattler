@@ -84,19 +84,19 @@ You need to use [pixi](https://pixi.sh).
 
 ```bash
 # Execute feedrattler CLI
-pixi run -e dev feedrattler
+pixi run feedrattler
 
 # Run tests
-pixi run -e dev test
+pixi run test
 
 # Format code
-pixi run -e dev format
+pixi run format
 
 # Lint code
-pixi run -e dev lint
+pixi run lint
 
 # Lint and format code
-pixi run -e dev lint-format
+pixi run lint-format
 ```
 
 ## Release 🚢

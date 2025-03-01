@@ -25,7 +25,7 @@ dependencies = [
     "python-dotenv >=1.0",
 ]
 
-# NOTE: dynamic version does not work well with pixi build
+# NOTE: dynamic version does not work with pixi build
 # dynamic = ["version", "readme"]
 dynamic = ["readme"]
 version = "0.3.1"
@@ -62,56 +62,6 @@ platforms = ["linux-64", "osx-64", "osx-arm64", "win-64", "linux-aarch64"]
 
 # Pixi dependencies and features
 
-[tool.pixi.dependencies]
-python = ">=3.11"
-pygithub = ">=2.5"
-conda-smithy = ">=3.45"
-"ruamel.yaml" = ">=0.18"
-gitpython = ">=3.1"
-conda-recipe-manager = ">=0.4.0"
-typer = ">=0.15"
-rich = ">=13.9"
-python-dotenv = ">=1.0"
-gh = ">=2.67.0"
-
-[tool.pixi.pypi-dependencies]
-feedrattler = { path = ".", editable = true }
-
-[tool.pixi.feature.dev.dependencies]
-pip = "*"
-setuptools = ">=75"
-setuptools-scm = ">=8"
-ruff = "*"
-jupyterlab = "*"
-semver = "*"
-git = "*"
-python-build = "*"
-pytest = "*"
-
-[tool.pixi.feature.dev.tasks]
-feedrattler = "feedrattler"
-test = 'python -m pytest tests/ -vvv'
-format = "ruff format -v"
-lint = "ruff check -v --fix"
-lint-format = { depends-on = ["format", "lint"] }
-
-[tool.pixi.feature.py311.dependencies]
-python = "3.11.*"
-
-[tool.pixi.feature.py312.dependencies]
-python = "3.12.*"
-
-[tool.pixi.feature.py313.dependencies]
-python = "3.13.*"
-
-[tool.pixi.environments]
-dev = ["dev", "py311"]
-test-py311 = ["dev", "py311"]
-test-py312 = ["dev", "py312"]
-test-py313 = ["dev", "py313"]
-
-# Pixi build
-
 [tool.pixi.package.build]
 backend = { name = "pixi-build-python", version = "*" }
 channels = ["https://prefix.dev/pixi-build-backends", "conda-forge"]
@@ -132,6 +82,40 @@ typer = ">=0.15"
 rich = ">=13.9"
 python-dotenv = ">=1.0"
 gh = ">=2.67.0"
+
+[tool.pixi.dependencies]
+feedrattler = { path = "." }
+
+[tool.pixi.feature.dev.dependencies]
+# dev tools
+ruff = "*"
+jupyterlab = "*"
+pytest = "*"
+# releasing tools
+semver = "*"
+git = "*"
+
+[tool.pixi.feature.dev.tasks]
+feedrattler = "feedrattler"
+test = 'python -m pytest tests/ -vvv'
+format = "ruff format -v"
+lint = "ruff check -v --fix"
+lint-format = { depends-on = ["format", "lint"] }
+
+[tool.pixi.feature.py311.dependencies]
+python = "3.11.*"
+
+[tool.pixi.feature.py312.dependencies]
+python = "3.12.*"
+
+[tool.pixi.feature.py313.dependencies]
+python = "3.13.*"
+
+[tool.pixi.environments]
+default = ["dev", "py311"]
+test-py311 = ["dev", "py311"]
+test-py312 = ["dev", "py312"]
+test-py313 = ["dev", "py313"]
 
 # Ruff
 [tool.ruff]
