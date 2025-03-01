@@ -46,7 +46,7 @@ body = """
 {% for contributor in github.contributors | filter(attribute="is_first_time", value=true) %}
   - @{{ contributor.username }} made their first contribution in [#{{ contributor.pr_number }}]\
     (https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}/pull/{{ contributor.pr_number }})\
-{% endfor %}\n
+{% endfor %}\n\n
 """
 # template for the changelog footer
 footer = """
