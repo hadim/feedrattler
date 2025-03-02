@@ -81,6 +81,8 @@ pytest = "*"
 # releasing tools
 semver = "*"
 git = "*"
+gh  ="*"
+git-cliff = "*"
 
 [tool.pixi.tasks]
 feedrattler = "feedrattler"
