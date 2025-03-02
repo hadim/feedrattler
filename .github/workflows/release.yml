@@ -110,16 +110,17 @@ jobs:
           RELEASE_TITLE=$(parse-changelog --title-no-link CHANGELOG.md "$RELEASE_TAG")
 
           # Store output for GitHub Release
-          echo "::set-output name=body::$RELEASE_BODY"
+          echo "body=$RELEASE_BODY" >> $GITHUB_OUTPUT
 
           # Store output for GitHub Release title
-          echo "::set-output name=title::$RELEASE_TITLE"
+          echo "title=$RELEASE_TITLE" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         env:
           RELEASE_TITLE: "${{ steps.parse-changelog.outputs.title }}"
           RELEASE_BODY: "${{ steps.parse-changelog.outputs.body }}"
           RELEASE_TAG: "${{ inputs.release-version }}"
+          GH_TOKEN: "${{ github.token }}"
         run: |
           # Write and read notes from a file to avoid quoting breaking things
           echo "$RELEASE_BODY" > $RUNNER_TEMP/notes.txt

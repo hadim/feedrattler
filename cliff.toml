@@ -14,6 +14,7 @@ repo = "feedrattler"
 header = """
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD012 -->
+<!-- markdownlint-disable MD034 -->
 
 # Changelog\n
 All notable changes to this project will be documented in this file.
