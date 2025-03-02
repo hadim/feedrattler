@@ -74,14 +74,10 @@ jobs:
       # Release logic
 
       - name: Generate a changelog
-        uses: orhun/git-cliff-action@v4
-        id: git-cliff
-        with:
-          config: cliff.toml
-          args: --unreleased --prepend CHANGELOG.md --tag ${{ inputs.release-version }}
-
-      - name: Print the changelog
-        run: cat "${{ steps.git-cliff.outputs.changelog }}"
+        env:
+          RELEASE_TAG: "${{ inputs.release-version }}"
+        run: |
+          git-cliff --unreleased --prepend CHANGELOG.md --tag $RELEASE_TAG
 
       - name: Configure git
         run: |
@@ -99,8 +95,35 @@ jobs:
           git tag -a "${{ inputs.release-version }}" -m "Release version ${{ inputs.release-version }}"
           git push origin "${{ inputs.release-version }}"
 
+      # NOTE: ideally, parse-changelog should be shipped via conda-forge
+      - uses: taiki-e/install-action@parse-changelog
+
+      - name: Parse changelog
+        id: parse-changelog
+        env:
+          RELEASE_TAG: "${{ inputs.release-version }}"
+        run: |
+          # Parse changelog body
+          RELEASE_BODY=$(parse-changelog CHANGELOG.md "$RELEASE_TAG")
+
+          # Parse changelog title
+          RELEASE_TITLE=$(parse-changelog --title-no-link CHANGELOG.md "$RELEASE_TAG")
+
+          # Store output for GitHub Release
+          echo "::set-output name=body::$RELEASE_BODY"
+
+          # Store output for GitHub Release title
+          echo "::set-output name=title::$RELEASE_TITLE"
+
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ inputs.release-version }}
-          body: ${{ steps.git-cliff.outputs.content }}
+        env:
+          RELEASE_TITLE: "${{ steps.parse-changelog.outputs.title }}"
+          RELEASE_BODY: "${{ steps.parse-changelog.outputs.body }}"
+          RELEASE_TAG: "${{ inputs.release-version }}"
+        run: |
+          # Write and read notes from a file to avoid quoting breaking things
+          echo "$RELEASE_BODY" > $RUNNER_TEMP/notes.txt
+
+          gh release create "$RELEASE_TAG" \
+            --title "$RELEASE_TITLE" \
+            --notes-file "$RUNNER_TEMP/notes.txt"
