@@ -39,14 +39,6 @@ def version_callback(value: bool):
         raise typer.Exit()
 
 
-@app.callback()
-def common(
-    ctx: typer.Context,
-    version: bool = typer.Option(None, "--version", callback=version_callback),
-):
-    pass
-
-
 @app.command()
 def main(
     feedstock_name: str,
@@ -65,6 +57,7 @@ def main(
     github_token: Optional[str] = typer.Option(None, envvar="GITHUB_TOKEN"),
     dotenv: Optional[str] = None,
     clone_type: CloneType = CloneType.auto,
+    version: bool = typer.Option(None, "--version", callback=version_callback),
 ):
     load_dotenv(dotenv)
     github_token = os.getenv("GITHUB_TOKEN", github_token)
