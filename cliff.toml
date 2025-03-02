@@ -12,6 +12,9 @@ repo = "feedrattler"
 [changelog]
 # changelog header
 header = """
+<!-- markdownlint-disable MD024 -->
+<!-- markdownlint-disable MD012 -->
+
 # Changelog\n
 All notable changes to this project will be documented in this file.
 

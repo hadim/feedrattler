@@ -1,9 +1,29 @@
+<!-- markdownlint-disable MD024 -->
+<!-- markdownlint-disable MD012 -->
+
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.6.0] - 2025-03-02
+
+### 🐛 Fixed
+
+- Fix changelog
+
+### 📦 Changed
+
+- Changelog
+
+
 ## [0.3.6] - 2025-03-01
 
 ### 🐛 Fixed
 
 - Fix wrong version during install by @hadim in [#18](https://github.com/hadim/feedrattler/pull/18)
-
 
 ## [0.3.5] - 2025-03-01
 
@@ -21,7 +41,6 @@
 
 - Merge branch 'main' of https://github.com/hadim/feedrattler by @hadim
 
-
 ## [0.3.4] - 2025-03-01
 
 ### ⚙️ Infra
@@ -38,14 +57,6 @@
 
 - Remove verbose for lint and format commands by @hadim
 
-
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
 ## [0.3.3] - 2025-03-01
 
 ### Fixed
@@ -56,7 +67,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Infra
 
 - Dummy pr to test the release process by @hadim in [#16](https://github.com/hadim/feedrattler/pull/16)
-
 
 ## [0.3.2] - 2025-03-01
 
