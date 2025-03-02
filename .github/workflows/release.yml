@@ -109,11 +109,15 @@ jobs:
           # Parse changelog title
           RELEASE_TITLE=$(parse-changelog --title-no-link CHANGELOG.md "$RELEASE_TAG")
 
-          # Store output for GitHub Release
-          echo "body=$RELEASE_BODY" >> $GITHUB_OUTPUT
+          # Store output for GitHub Release using multiline delimiter
+          echo "body<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$RELEASE_BODY" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
-          # Store output for GitHub Release title
-          echo "title=$RELEASE_TITLE" >> $GITHUB_OUTPUT
+          # Store output for GitHub Release title using multiline delimiter
+          echo "title<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$RELEASE_TITLE" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         env:
