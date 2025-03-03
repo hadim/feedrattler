@@ -1,8 +1,8 @@
 # `feedrattler` 🐍
 
 [release-badge]: https://img.shields.io/github/v/release/hadim/feedrattler?logo=github
-[conda-badge]: https://anaconda.org/conda-forge/feedrattler/badges/version.svg
-[conda-downloads-badge]: https://anaconda.org/conda-forge/feedrattler/badges/downloads.svg
+[conda-badge]: https://anaconda.org/conda-forge/feedrattler/badges/version.svg?cache-control=no-cache
+[conda-downloads-badge]: https://anaconda.org/conda-forge/feedrattler/badges/downloads.svg?cache-control=no-cache
 [test-badge]: https://github.com/hadim/feedrattler/actions/workflows/test.yml/badge.svg?branch=main
 [lint-badge]: https://github.com/hadim/feedrattler/actions/workflows/lint.yml/badge.svg?branch=main
 
