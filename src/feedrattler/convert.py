@@ -13,6 +13,7 @@ from conda_smithy import configure_feedstock
 from git import Repo
 from github import UnknownObjectException
 
+from . import __version__
 from .utils import (
     CloneType,
     initialize_yaml,
@@ -252,18 +253,18 @@ def convert_feedstock_to_v1(
     # Step 10: Create a PR to the conda-forge feedstock
 
     pr_title = f"Convert {feedstock_name} to v1 feedstock"
-    pr_body = (
-        f"This PR converts {feedstock_name} to a v1 recipe and switch the conda build tool to rattler-build."
-        f"It has been automatically generated with [feedrattler](https://github.com/hadim/feedrattler)."
-        "\n"
-        f"\nChanges:\n- [x] 📝 Converted `meta.yaml` to `recipe.yaml`"
-        f"\n- [x] Used a [personal fork of the feedstock to propose changes](https://conda-forge.org/docs/maintainer/updating_pkgs.html#forking-and-pull-requests)"
-        f"\n- [x] 🔧 Updated `conda-forge.yml` to use `rattler-build` and `pixi` (optional)"
-        f"\n- [x] 🔢 Bumped the build number"
-        f"\n- [x] 🐍 Applied temporary fixes for `python_min` and `python_version`"
-        f"\n- [x] 🔄 Rerender the feedstock with conda-smithy"
-        f"\n- [ ] Ensured the license file is being packaged."
-    )
+    pr_body = f"""This PR converts {feedstock_name} to a v1 recipe and switch the conda build tool to rattler-build.
+It has been automatically generated with [feedrattler v{__version__}](https://github.com/hadim/feedrattler).
+
+Changes:
+- [x] 📝 Converted `meta.yaml` to `recipe.yaml`
+- [x] Used a [personal fork of the feedstock to propose changes](https://conda-forge.org/docs/maintainer/updating_pkgs.html#forking-and-pull-requests)
+- [x] 🔧 Updated `conda-forge.yml` to use `rattler-build` and `pixi` (optional)
+- [x] 🔢 Bumped the build number
+- [x] 🐍 Applied temporary fixes for `python_min` and `python_version`
+- [x] 🔄 Rerender the feedstock with conda-smithy
+- [ ] Ensured the license file is being packaged.
+"""
 
     logging.info("Creating a pull request to the conda-forge feedstock")
     try:
