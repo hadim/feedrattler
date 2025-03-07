@@ -217,8 +217,7 @@ def rename_bld_bat_to_build_bat(yaml_file_path: os.PathLike):
 
     # If bld.bat exists but build.bat already exits, do not rename and print a warning
     if os.path.exists(build_bat_path):
-        logging.warning("⚠️ `bld.bat` script exists, but `build.bat` script already exists so bld.bat is not renamed in build.bat")
-        return
+        raise Exception(f"❗ both `bld.bat` and `build.bat` script already exists so it is not possible to rename `bld.bat` to `build.bat`")
 
     logging.info("🔄 Renaming `bld.bat` script to `build.bat`")
 
