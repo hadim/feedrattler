@@ -1,5 +1,6 @@
 import logging
 import os
+import pathlib
 import re
 import shutil
 import subprocess
@@ -203,3 +204,26 @@ def remove_empty_script_test(yaml_file_path: os.PathLike):
 
     with open(yaml_file_path, "w") as f:
         yaml.dump(data, f)
+
+
+def rename_bld_bat_to_build_bat(yaml_file_path: os.PathLike):
+    """If present, rename bld.bat to build.bat"""
+
+    yaml_file_path = pathlib.Path(yaml_file_path).resolve()
+    yaml_file_folder = yaml_file_path.parent
+    candidate_bld_bat_path = yaml_file_folder / "bld.bat"
+
+    if not candidate_bld_bat_path.exists():
+        return
+
+    build_bat_path = yaml_file_folder / "build.bat"
+
+    # If bld.bat exists but build.bat already exists, do not rename and print a warning
+    if build_bat_path.exists():
+        raise Exception(
+            "❗ both `bld.bat` and `build.bat` script already exists so it is not possible to rename `bld.bat` to `build.bat`"
+        )
+
+    logging.info("🔄 Renaming `bld.bat` script to `build.bat`")
+
+    candidate_bld_bat_path.rename(build_bat_path)

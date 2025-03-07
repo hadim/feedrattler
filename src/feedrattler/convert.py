@@ -18,6 +18,7 @@ from .utils import (
     CloneType,
     initialize_yaml,
     remove_empty_script_test,
+    rename_bld_bat_to_build_bat,
     update_python_min_in_recipe,
     update_python_version_in_tests,
 )
@@ -175,6 +176,10 @@ def convert_feedstock_to_v1(
     # fix #3: remove script test if tests[].script does not exist
     # NOTE: waiting for upstream fix at https://github.com/hadim/feedrattler/issues/7
     remove_empty_script_test(recipe_yaml_path)
+
+    # fix #4: if present rename bld.bat to build.bat
+    # NOTE: waiting for upstream discussion at https://github.com/conda-incubator/conda-recipe-manager/issues/314
+    rename_bld_bat_to_build_bat(recipe_yaml_path)
 
     # Step 6: Commit changes
 
