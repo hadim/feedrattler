@@ -46,40 +46,85 @@ $ feedrattler --help
 
  Usage: feedrattler [OPTIONS] FEEDSTOCK_NAME [GITHUB_USERNAME]
 
-╭─ Arguments ────────────────────────────────────────────────────────────────────────────────╮
-│ *    feedstock_name       TEXT               [default: None] [required]                    │
-│      github_username      [GITHUB_USERNAME]  [default: None]                               │
-╰────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Options ──────────────────────────────────────────────────────────────────────────────────╮
-│ --use-pixi                --no-use-pixi                             [default: use-pixi]    │
-│ --local-clone-dir                                 TEXT              [default: None]        │
-│ --local-clone-dir-for…    --no-local-clone-di…                      [default:              │
-│                                                                     no-local-clone-dir-fo… │
-│ --git-rev                                         TEXT              The git SHA to clone   │
-│                                                                     the feedstock. The     │
-│                                                                     default branch HEAD is │
-│                                                                     used when None.        │
-│                                                                     [default: None]        │
-│ --branch-name                                     TEXT              [default:              │
-│                                                                     convert_feedstock_to_… │
-│ --rerender                --no-rerender                             [default: rerender]    │
-│ --enable-rerender-logs    --no-enable-rerende…                      [default:              │
-│                                                                     no-enable-rerender-lo… │
-│ --log-level                                       TEXT              [default: INFO]        │
-│ --github-token                                    TEXT              [env var:              │
-│                                                                     GITHUB_TOKEN]          │
-│                                                                     [default: None]        │
-│ --dotenv                                          TEXT              [default: None]        │
-│ --clone-type                                      [auto|ssh|https]  [default: auto]        │
-│ --install-completion                                                Install completion for │
-│                                                                     the current shell.     │
-│ --show-completion                                                   Show completion for    │
-│                                                                     the current shell, to  │
-│                                                                     copy it or customize   │
-│                                                                     the installation.      │
-│ --help                                                              Show this message and  │
-│                                                                     exit.                  │
-╰────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Arguments ─────────────────────────────────────────────────────────────────────────────────╮
+│ *    feedstock_name       TEXT               📦 The name of the feedstock repository.       │
+│                                              [default: None]                                │
+│                                              [required]                                     │
+│      github_username      [GITHUB_USERNAME]  👤 The GitHub username or organization that    │
+│                                              owns the feedstock.                            │
+│                                              [default: None]                                │
+╰─────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ───────────────────────────────────────────────────────────────────────────────────╮
+│ --use-pixi                --no-use-pixi                              🚀 Add `pixi` to the   │
+│                                                                      conda-forge            │
+│                                                                      configuration          │
+│                                                                      `conda_install_tool`   │
+│                                                                      to manage the conda    │
+│                                                                      environment.           │
+│                                                                      [default: use-pixi]    │
+│ --local-clone-dir                                  TEXT              📁 Path to a local     │
+│                                                                      clone of the feedstock │
+│                                                                      repository. A          │
+│                                                                      temporary dir will be  │
+│                                                                      created if not set.    │
+│                                                                      [default: None]        │
+│ --local-clone-dir-for…    --no-local-clone-dir…                      💥 Force erase the     │
+│                                                                      local clone directory  │
+│                                                                      if it exists.          │
+│                                                                      [default:              │
+│                                                                      no-local-clone-dir-fo… │
+│ --git-rev                                          TEXT              📌 The git SHA to      │
+│                                                                      clone the feedstock.   │
+│                                                                      The default branch     │
+│                                                                      HEAD is used when not  │
+│                                                                      set.                   │
+│                                                                      [default: None]        │
+│ --branch-name                                      TEXT              🌿 The name of the     │
+│                                                                      branch to create for   │
+│                                                                      the converted recipe.  │
+│                                                                      [default:              │
+│                                                                      convert_feedstock_to_… │
+│ --rerender                --no-rerender                              🔄 Whether to          │
+│                                                                      re-render the          │
+│                                                                      feedstock after        │
+│                                                                      conversion.            │
+│                                                                      [default: rerender]    │
+│ --enable-rerender-logs    --no-enable-rerender…                      📝 Enable detailed     │
+│                                                                      logs from the          │
+│                                                                      re-rendering process.  │
+│                                                                      [default:              │
+│                                                                      no-enable-rerender-lo… │
+│ --log-level                                        TEXT              🚦 The log level to    │
+│                                                                      use. Options: DEBUG,   │
+│                                                                      INFO, WARNING, ERROR,  │
+│                                                                      CRITICAL               │
+│                                                                      [default: INFO]        │
+│ --github-token                                     TEXT              🔑 GitHub token.       │
+│                                                                      Defaults to the        │
+│                                                                      GITHUB_TOKEN           │
+│                                                                      environment variable   │
+│                                                                      or gh cli.             │
+│                                                                      [env var:              │
+│                                                                      GITHUB_TOKEN]          │
+│                                                                      [default: None]        │
+│ --dotenv                                           TEXT              📄 Path to a .env fil… │
+│                                                                      containing environment │
+│                                                                      variables.             │
+│                                                                      [default: None]        │
+│ --clone-type                                       [auto|ssh|https]  🐑 The type of clone   │
+│                                                                      to use (ssh or https). │
+│                                                                      [default: auto]        │
+│ --version                                                            Show the version of    │
+│                                                                      the application.       │
+│ --install-completion                                                 Install completion for │
+│                                                                      the current shell.     │
+│ --show-completion                                                    Show completion for    │
+│                                                                      the current shell, to  │
+│                                                                      copy it or customize   │
+│                                                                      the installation.      │
+│ --help                                                               Show this message and  │
+│                                                                      exit.                  │
+╰─────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ## Development 🛠️

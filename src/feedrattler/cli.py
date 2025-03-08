@@ -41,23 +41,61 @@ def version_callback(value: bool):
 
 @app.command()
 def main(
-    feedstock_name: str,
-    github_username: Annotated[Optional[str], typer.Argument()] = None,
-    use_pixi: bool = True,
-    local_clone_dir: Optional[str] = None,
-    local_clone_dir_force_erase: bool = False,
+    feedstock_name: Annotated[str, typer.Argument(help="📦 The name of the feedstock repository.")],
+    github_username: Annotated[
+        Optional[str], typer.Argument(help="👤 The GitHub username or organization that owns the feedstock.")
+    ] = None,
+    use_pixi: Annotated[
+        bool,
+        typer.Option(
+            help="🚀 Add `pixi` to the conda-forge configuration `conda_install_tool` to manage the conda environment."
+        ),
+    ] = True,
+    local_clone_dir: Annotated[
+        Optional[str],
+        typer.Option(
+            help="📁 Path to a local clone of the feedstock repository. A temporary dir will be created if not set."
+        ),
+    ] = None,
+    local_clone_dir_force_erase: Annotated[
+        bool, typer.Option(help="💥 Force erase the local clone directory if it exists.")
+    ] = False,
     git_rev: Annotated[
         Optional[str],
-        typer.Option(help="The git SHA to clone the feedstock. The default branch HEAD is used when None."),
+        typer.Option(
+            help="📌 The git SHA to clone the feedstock. The default branch HEAD is used when not set."
+        ),
     ] = None,
-    branch_name: str = "convert_feedstock_to_v1_recipe_format",
-    rerender: bool = True,
-    enable_rerender_logs: bool = False,
-    log_level: str = "INFO",
-    github_token: Optional[str] = typer.Option(None, envvar="GITHUB_TOKEN"),
-    dotenv: Optional[str] = None,
-    clone_type: CloneType = CloneType.auto,
-    version: bool = typer.Option(None, "--version", callback=version_callback),
+    branch_name: Annotated[
+        str, typer.Option(help="🌿 The name of the branch to create for the converted recipe.")
+    ] = "convert_feedstock_to_v1_recipe_format",
+    rerender: Annotated[
+        bool, typer.Option(help="🔄 Whether to re-render the feedstock after conversion.")
+    ] = True,
+    enable_rerender_logs: Annotated[
+        bool, typer.Option(help="📝 Enable detailed logs from the re-rendering process.")
+    ] = False,
+    log_level: Annotated[
+        str,
+        typer.Option(help="🚦 The log level to use. Options: DEBUG, INFO, WARNING, ERROR, CRITICAL"),
+    ] = "INFO",
+    github_token: Annotated[
+        Optional[str],
+        typer.Option(
+            envvar="GITHUB_TOKEN",
+            help="🔑 GitHub token. Defaults to the GITHUB_TOKEN environment variable or gh cli.",
+        ),
+    ] = None,
+    dotenv: Annotated[
+        Optional[str], typer.Option(help="📄 Path to a .env file containing environment variables.")
+    ] = None,
+    clone_type: Annotated[
+        CloneType, typer.Option(help="🐑 The type of clone to use (ssh or https).")
+    ] = CloneType.auto,
+    version: Annotated[
+        bool,
+        typer.Option("--version", callback=version_callback, help="Show the version of the application."),
+    ] = False,
 ):
     load_dotenv(dotenv)
     github_token = os.getenv("GITHUB_TOKEN", github_token)
