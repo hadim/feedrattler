@@ -14,8 +14,9 @@
 
 Convert conda-forge feedstock to rattler-build.
 
-This project uses [Conda Recipe Manager (CRM)](https://github.com/conda-incubator/conda-recipe-manager) to upgrade V0 (`meta.yaml`) recipe files to the new V1 (`recipe.yaml`) files.
-If you run into issues when it comes to upgrading to the `recipe.yaml` file specifically, please consult the list of open [CRM Issues](https://github.com/conda-incubator/conda-recipe-manager/issues) and submit a new ticket if you don't see an existing issue that describes your problem.
+> [!IMPORTANT]
+> This project uses [Conda Recipe Manager (CRM)](https://github.com/conda-incubator/conda-recipe-manager) to upgrade V0 (`meta.yaml`) recipe files to the new V1 (`recipe.yaml`) files.
+> If you run into issues when it comes to upgrading to the `recipe.yaml` file specifically, **please consult the list of open [CRM Issues](https://github.com/conda-incubator/conda-recipe-manager/issues)** and submit a new ticket if you don't see an existing issue that describes your problem.
 
 ## Usage 🚀
 
