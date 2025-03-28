@@ -11,7 +11,7 @@ from conda_recipe_manager.commands.convert import convert_file
 from conda_recipe_manager.commands.utils.types import ExitCode
 from conda_smithy import configure_feedstock
 from git import Repo
-from github import UnknownObjectException
+from github import Github, UnknownObjectException
 
 from . import __version__
 from .utils import (
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 def convert_feedstock_to_v1(
-    gh,
+    gh: Github,
     feedstock_name: str,
     github_username: str,
     use_pixi: bool = False,
@@ -38,6 +38,7 @@ def convert_feedstock_to_v1(
     enable_rerender_logs: bool = False,
     do_rerender: bool = True,
     clone_type: CloneType = CloneType.https,
+    draft_pr: bool = True,
 ):
     # Step 0: Initialize
 
@@ -49,16 +50,16 @@ def convert_feedstock_to_v1(
     logging.info(f"🔧 use_pixi={use_pixi}")
 
     org = gh.get_organization("conda-forge")
-    repo = org.get_repo(feedstock_name)
+    gh_repo = org.get_repo(feedstock_name)
 
     # Step 1: Check if feedstock is already a v1 feedstock
 
     logging.info(f"🔍 Checking if {feedstock_name} is already a v1 feedstock with `recipe/recipe.yaml`")
     try:
         if git_rev is not None:
-            repo.get_contents("recipe/recipe.yaml", ref=git_rev)
+            gh_repo.get_contents("recipe/recipe.yaml", ref=git_rev)
         else:
-            repo.get_contents("recipe/recipe.yaml")
+            gh_repo.get_contents("recipe/recipe.yaml")
         is_v1_feedstock = True
     except UnknownObjectException:
         is_v1_feedstock = False
@@ -86,8 +87,8 @@ def convert_feedstock_to_v1(
     # conda-smithy requires the clone directory to be named after the feedstock
     repo_dir_temp = repo_dir_temp_parent / feedstock_name
 
-    logger.info(f"🔄 Cloning {repo.clone_url} to {repo_dir_temp}")
-    git_repo = Repo.clone_from(repo.clone_url, repo_dir_temp)
+    logger.info(f"🔄 Cloning {gh_repo.clone_url} to {repo_dir_temp}")
+    git_repo = Repo.clone_from(gh_repo.clone_url, repo_dir_temp)
 
     # If git_rev is set then checkout the revision
     if git_rev is not None:
@@ -221,7 +222,7 @@ def convert_feedstock_to_v1(
         fork_repo = gh_user.get_repo(feedstock_name)
     except UnknownObjectException:
         logging.info(f"🔀 Creating fork for {github_username}/{feedstock_name}")
-        fork_repo = repo.create_fork()
+        fork_repo = gh_repo.create_fork()
         time.sleep(2)
 
         # Wait for the fork to be created
@@ -273,11 +274,12 @@ Changes:
 
     logging.info("Creating a pull request to the conda-forge feedstock")
     try:
-        pr = repo.create_pull(
+        pr = gh_repo.create_pull(
             title=pr_title,
             body=pr_body,
             head=f"{github_username}:{branch_name}",
             base="main",
+            draft=draft_pr,
         )
         logging.info(f"Created pull request: {pr.html_url}")
     except Exception as e:
