@@ -9,6 +9,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.13] - 2025-03-28
+
+### ✨ Added
+
+- Add `--draft-pr/--no-draft-pr` option. The option is enabled by default. by @hadim in [#36](https://github.com/hadim/feedrattler/pull/36)
+
+### 📚 Documentation
+
+- Adds a link to CRM issues in the README by @schuylermartin45 in [#32](https://github.com/hadim/feedrattler/pull/32)
+
+### 📦 Changed
+
+- Update pixi lockfile by @github-actions[bot] in [#28](https://github.com/hadim/feedrattler/pull/28)
+- Update pixi lockfile by @github-actions[bot] in [#33](https://github.com/hadim/feedrattler/pull/33)
+- Update pixi lockfile by @github-actions[bot] in [#34](https://github.com/hadim/feedrattler/pull/34)
+
+### New Contributors
+
+- @schuylermartin45 made their first contribution in [#32](https://github.com/hadim/feedrattler/pull/32)
+
 ## [0.3.12] - 2025-03-08
 
 ### 📚 Documentation
