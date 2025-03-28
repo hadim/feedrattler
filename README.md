@@ -43,11 +43,11 @@ pixi add feedrattler
 
 ## Options ⚙️
 
-<!-- Generate and edit with `pixi run typer feedrattler.cli utils docs` -->
+<!-- Generate and edit with `pixi run typer feedrattler.cli utils docs --name feedrattler` -->
 
 Use `feedrattler --help` to see all available options.
 
-```bash
+```console
 feedrattler [OPTIONS] FEEDSTOCK_NAME [GITHUB_USERNAME]
 ```
 
@@ -64,12 +64,15 @@ feedrattler [OPTIONS] FEEDSTOCK_NAME [GITHUB_USERNAME]
 - `--git-rev TEXT`: 📌 The git SHA to clone the feedstock. The default branch HEAD is used when not set.
 - `--branch-name TEXT`: 🌿 The name of the branch to create for the converted recipe. [default: convert_feedstock_to_v1_recipe_format]
 - `--rerender / --no-rerender`: 🔄 Whether to re-render the feedstock after conversion. [default: rerender]
+- `--draft-pr / --no-draft-pr`: 📝 Whether to create a draft pull request or not. [default: draft-pr]
 - `--enable-rerender-logs / --no-enable-rerender-logs`: 📝 Enable detailed logs from the re-rendering process. [default: no-enable-rerender-logs]
 - `--log-level TEXT`: 🚦 The log level to use. Options: DEBUG, INFO, WARNING, ERROR, CRITICAL [default: INFO]
 - `--github-token TEXT`: 🔑 GitHub token. Defaults to the GITHUB_TOKEN environment variable or gh cli. [env var: GITHUB_TOKEN]
 - `--dotenv TEXT`: 📄 Path to a .env file containing environment variables.
 - `--clone-type [auto|ssh|https]`: 🐑 The type of clone to use (ssh or https). [default: auto]
 - `--version`: Show the version of the application.
+- `--install-completion`: Install completion for the current shell.
+- `--show-completion`: Show completion for the current shell, to copy it or customize the installation.
 - `--help`: Show this message and exit.
 
 ## Development 🛠️
