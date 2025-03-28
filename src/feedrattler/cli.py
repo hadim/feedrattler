@@ -72,6 +72,7 @@ def main(
     rerender: Annotated[
         bool, typer.Option(help="🔄 Whether to re-render the feedstock after conversion.")
     ] = True,
+    draft_pr: Annotated[bool, typer.Option(help="📝 Whether to create a draft pull request or not.")] = True,
     enable_rerender_logs: Annotated[
         bool, typer.Option(help="📝 Enable detailed logs from the re-rendering process.")
     ] = False,
@@ -143,4 +144,5 @@ def main(
         enable_rerender_logs=enable_rerender_logs,
         do_rerender=rerender,
         clone_type=clone_type,
+        draft_pr=draft_pr,
     )

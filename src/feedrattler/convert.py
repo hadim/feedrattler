@@ -38,6 +38,7 @@ def convert_feedstock_to_v1(
     enable_rerender_logs: bool = False,
     do_rerender: bool = True,
     clone_type: CloneType = CloneType.https,
+    draft_pr: bool = True,
 ):
     # Step 0: Initialize
 
@@ -278,6 +279,7 @@ Changes:
             body=pr_body,
             head=f"{github_username}:{branch_name}",
             base="main",
+            draft=draft_pr,
         )
         logging.info(f"Created pull request: {pr.html_url}")
     except Exception as e:
