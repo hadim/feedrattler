@@ -7,7 +7,7 @@ permissions:
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 4 * * MON"
+    - cron: "0 0 1 * *"  # monthly
 
 jobs:
   pixi-update:
