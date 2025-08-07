@@ -46,7 +46,7 @@ channels = ["conda-forge"]
 platforms = ["linux-64", "osx-64", "osx-arm64", "win-64", "linux-aarch64"]
 
 [tool.pixi.package]
-version = "0.0.0-dev" # remove once pixi supports dynamic version
+version = "0.0.0.dev" # remove once pixi supports dynamic version
 
 # Pixi dependencies and features
 
