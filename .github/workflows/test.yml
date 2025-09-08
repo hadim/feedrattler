@@ -7,8 +7,8 @@ on:
     branches:
       - "*"
       - "!gh-pages"
-  schedule:
-    - cron: "0 4 * * MON"
+  # schedule:
+  #   - cron: "0 4 * * MON"
 
 concurrency:
   # Cancel previous builds if a new one is triggered.
