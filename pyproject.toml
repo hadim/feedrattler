@@ -2,7 +2,7 @@
 name = "feedrattler"
 description = "Convert conda-forge feedstock to rattler-build"
 authors = [{ name = "Hadrien Mary", email = "hadrien.mary@gmail.com" }]
-license = { file = "LICENSE" }
+license = "Apache-2.0"
 classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
@@ -50,9 +50,9 @@ version = "0.0.0.dev" # remove once pixi supports dynamic version
 
 # Pixi dependencies and features
 
-[tool.pixi.package.build]
-backend = { name = "pixi-build-python", version = "*" }
-channels = ["https://prefix.dev/pixi-build-backends", "conda-forge"]
+[tool.pixi.package.build.backend]
+name = "pixi-build-python"
+version = "*"
 
 [tool.pixi.package.host-dependencies]
 pip = "*"
@@ -81,7 +81,7 @@ pytest = "*"
 # releasing tools
 semver = "*"
 git = "*"
-gh  ="*"
+gh = "*"
 git-cliff = "*"
 
 [tool.pixi.tasks]
