@@ -4,7 +4,6 @@ description = "Convert conda-forge feedstock to rattler-build"
 authors = [{ name = "Hadrien Mary", email = "hadrien.mary@gmail.com" }]
 license = "Apache-2.0"
 classifiers = [
-    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.11",
