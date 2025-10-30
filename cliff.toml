@@ -88,6 +88,17 @@ commit_preprocessors = [
     # remove issue numbers from commits
     { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "" },
 ]
+# regex for skipping commits in the changelog
+commit_filters = [
+    # Skip automated pixi lockfile updates
+    { field = "message", pattern = ".*[Uu]pdate pixi lockfile.*" },
+    # Skip automated dependabot commits
+    { field = "message", pattern = ".*[Bb]ump .* from .* to .* in the dependencies group.*" },
+    # Skip hash/lock file updates
+    { field = "message", pattern = ".*[Uu]pdate input hash.*" },
+    # Skip scheduled automation updates
+    { field = "message", pattern = ".*[Cc]omment out scheduled.*" },
+]
 # regex for parsing and grouping commits
 commit_parsers = [
     { message = "^docs:.*", group = "📚 Documentation" },
