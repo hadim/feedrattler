@@ -55,8 +55,8 @@ version = "*"
 
 [tool.pixi.package.host-dependencies]
 pip = "*"
-setuptools = ">=75"
-setuptools-scm = ">=8"
+setuptools = ">=80.9.0"
+setuptools-scm = ">=9.2.2"
 
 [tool.pixi.package.run-dependencies]
 python = ">=3.11"
@@ -64,9 +64,9 @@ pygithub = ">=2.5"
 conda-smithy = ">=3.45"
 "ruamel.yaml" = ">=0.18"
 gitpython = ">=3.1"
-conda-recipe-manager = ">=0.4.0"
-typer = ">=0.15"
-rich = ">=13.9"
+conda-recipe-manager = ">=0.8.0"
+typer = ">=0.20.0"
+rich = ">=14.2.0"
 python-dotenv = ">=1.0"
 gh = ">=2.67.0"
 
