@@ -11,13 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.14] - 2025-10-30
 
-### ⚙️ Infra
-
-- Bump prefix-dev/setup-pixi from 0.8.3 to 0.8.4 in the dependencies group by @dependabot[bot] in [#38](https://github.com/hadim/feedrattler/pull/38)
-- Bump prefix-dev/setup-pixi from 0.8.4 to 0.8.5 in the dependencies group by @dependabot[bot] in [#40](https://github.com/hadim/feedrattler/pull/40)
-- Bump prefix-dev/setup-pixi from 0.8.5 to 0.8.8 in the dependencies group by @dependabot[bot] in [#43](https://github.com/hadim/feedrattler/pull/43)
-- Bump prefix-dev/setup-pixi from 0.8.8 to 0.8.10 in the dependencies group by @dependabot[bot] in [#51](https://github.com/hadim/feedrattler/pull/51)
-
 ### ✨ Added
 
 - Add missing fail_on_unsupported_jinja argument by @carlodri in [#54](https://github.com/hadim/feedrattler/pull/54)
@@ -29,19 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comment out scheduled cron job in GitHub Actions workflow by @hadim
 - Comment out scheduled updates in dependabot and workflow configuration by @hadim
 
-### 📦 Changed
-
-- Update pixi lockfile by @github-actions[bot] in [#37](https://github.com/hadim/feedrattler/pull/37)
-- Update pixi lockfile by @github-actions[bot] in [#39](https://github.com/hadim/feedrattler/pull/39)
-- Update pixi lockfile by @github-actions[bot] in [#41](https://github.com/hadim/feedrattler/pull/41)
-- Update pixi lockfile by @github-actions[bot] in [#44](https://github.com/hadim/feedrattler/pull/44)
-- Update pixi lockfile by @github-actions[bot] in [#45](https://github.com/hadim/feedrattler/pull/45)
-- Update pixi lockfile by @github-actions[bot] in [#46](https://github.com/hadim/feedrattler/pull/46)
-- Update pixi lockfile by @github-actions[bot] in [#47](https://github.com/hadim/feedrattler/pull/47)
-- Update pixi lockfile by @github-actions[bot] in [#48](https://github.com/hadim/feedrattler/pull/48)
-- Update pixi lockfile by @github-actions[bot] in [#49](https://github.com/hadim/feedrattler/pull/49)
-- Update pixi lockfile by @github-actions[bot] in [#50](https://github.com/hadim/feedrattler/pull/50)
-
 ### 🔥 Removed
 
 - Remove obsolete classifier for Apache Software License by @hadim
@@ -49,7 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### New Contributors
 
 - @carlodri made their first contribution in [#54](https://github.com/hadim/feedrattler/pull/54)
-- @dependabot[bot] made their first contribution in [#51](https://github.com/hadim/feedrattler/pull/51)
 
 ## [0.3.13] - 2025-03-28
 
@@ -77,13 +56,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - CLI doc in README by @hadim in [#27](https://github.com/hadim/feedrattler/pull/27)
 
-
 ## [0.3.11] - 2025-03-08
 
 ### 📚 Documentation
 
 - Add doc for CLI by @hadim in [#26](https://github.com/hadim/feedrattler/pull/26)
-
 
 ## [0.3.10] - 2025-03-07
 
@@ -115,13 +92,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix broken cli by @hadim in [#20](https://github.com/hadim/feedrattler/pull/20)
 
-
 ## [0.3.7] - 2025-03-02
 
 ### ⚙️ Infra
 
 - Improve changelog in release process by @hadim in [#19](https://github.com/hadim/feedrattler/pull/19)
-
 
 ## [0.3.6] - 2025-03-01
 
