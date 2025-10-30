@@ -10517,14 +10517,14 @@ packages:
   - conda-smithy >=3.45
   - ruamel.yaml >=0.18
   - gitpython >=3.1
-  - conda-recipe-manager >=0.4.0
-  - typer >=0.15
-  - rich >=13.9
+  - conda-recipe-manager >=0.8.0
+  - typer >=0.20.0
+  - rich >=14.2.0
   - python-dotenv >=1.0
   - gh >=2.67.0
   license: Apache-2.0
   input:
-    hash: 7c8f6b7cb6c2f016bb8730afa422c4e73d97c49a13ab863803c74da520fa4bbf
+    hash: 7412e85d3c860a63a0a47e2189b2a0e239035b64c3f2d37dc69d2c752e6d76fc
     globs:
     - pyproject.toml
 - conda: https://conda.anaconda.org/conda-forge/noarch/filelock-3.20.0-pyhd8ed1ab_0.conda
