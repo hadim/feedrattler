@@ -104,7 +104,7 @@ def convert_feedstock_to_v1(
     logging.info("🔄 Converting `meta.yaml` to `recipe.yaml`")
     meta_yaml_path = repo_dir_temp / "recipe" / "meta.yaml"
     recipe_yaml_path = repo_dir_temp / "recipe" / "recipe.yaml"
-    result = convert_file(meta_yaml_path, output=recipe_yaml_path, print_output=False, debug=False)
+    result = convert_file(meta_yaml_path, output=recipe_yaml_path, print_output=False, debug=False, fail_on_unsupported_jinja=True)
 
     if result.code == ExitCode.RENDER_WARNINGS:
         warning_msg = f"❗ Warning while converting {meta_yaml_path} to {recipe_yaml_path}"
