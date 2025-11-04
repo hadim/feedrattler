@@ -39,6 +39,10 @@ conda install -c conda-forge feedrattler
 conda install -c conda-forge feedrattler
 # or
 pixi add feedrattler
+# or installed globally
+pixi global install feedrattler
+# or install latest (main) version from soure
+pixi global install --git https://github.com/hadim/feedrattler
 ```
 
 ## Options ⚙️
