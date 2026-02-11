@@ -69,35 +69,39 @@ def convert_feedstock_to_v1(
 
     logging.info(f"✅ {feedstock_name} is not a v1 feedstock.")
 
-    # Step 2: Clone the repository
-
+    # Step 2: Determine repo directory
     if local_clone_dir is None:
-        repo_dir_temp_parent = pathlib.Path(tempfile.mkdtemp())
+        repo_dir = pathlib.Path(tempfile.mkdtemp()) / feedstock_name
     else:
-        repo_dir_temp_parent = pathlib.Path(local_clone_dir)
+        repo_dir = pathlib.Path(local_clone_dir)
 
-        if repo_dir_temp_parent.exists():
-            if local_clone_dir_force_erase:
-                # delete the directory if it already exists
-                logging.info(f"🗑️ Deleting existing directory {repo_dir_temp_parent}")
-                shutil.rmtree(repo_dir_temp_parent)
-            else:
-                raise Exception(f"❗ Directory {repo_dir_temp_parent} already exists")
+        # Validate directory name
+        if repo_dir.name != feedstock_name:
+            raise ValueError(
+                f"Invalid repo_dir: expected directory name '{feedstock_name}', "
+                f"got '{repo_dir.name}'"
+            )
 
-    # conda-smithy requires the clone directory to be named after the feedstock
-    repo_dir_temp = repo_dir_temp_parent / feedstock_name
+    # Optionally erase
+    if repo_dir.exists() and local_clone_dir_force_erase:
+        logging.info(f"🗑️ Deleting existing directory {repo_dir}")
+        shutil.rmtree(repo_dir)
 
-    logger.info(f"🔄 Cloning {gh_repo.clone_url} to {repo_dir_temp}")
-    git_repo = Repo.clone_from(gh_repo.clone_url, repo_dir_temp)
-
-    # If git_rev is set then checkout the revision
-    if git_rev is not None:
-        logging.info(f"🔄 Checking out git revision {git_rev}")
-        git_repo.git.checkout(git_rev)
-
-    # Create a new branch and checkout
-    new_branch = git_repo.create_head(branch_name)
-    new_branch.checkout()
+    # Decide whether to run git
+    if not repo_dir.exists() or not any(repo_dir.iterdir()):
+        repo_dir.parent.mkdir(parents=True, exist_ok=True)
+    
+        logging.info(f"🔄 Cloning {gh_repo.clone_url} to {repo_dir}")
+        git_repo = Repo.clone_from(gh_repo.clone_url, repo_dir)
+    
+        if git_rev is not None:
+            logging.info(f"🔄 Checking out git revision {git_rev}")
+            git_repo.git.checkout(git_rev)
+    
+        new_branch = git_repo.create_head(branch_name)
+        new_branch.checkout()
+    else:
+        logging.info(f"📂 Using existing contents in {repo_dir}; skipping git operations")
 
     # Step 3: Convert `meta.yaml` to `recipe.yaml`
 
