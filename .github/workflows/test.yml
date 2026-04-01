@@ -7,9 +7,6 @@ on:
     branches:
       - "*"
       - "!gh-pages"
-  schedule:
-    - cron: "0 0 1 * *" # monthly
-
 concurrency:
   # Cancel previous builds if a new one is triggered.
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}

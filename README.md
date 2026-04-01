@@ -1,5 +1,10 @@
 # `feedrattler` 🐍
 
+> [!WARNING]
+> **This project is no longer actively maintained.** I no longer have the time to work on it and I am no longer using the tool myself. The code is provided as-is with no guarantee of future updates or bug fixes.
+>
+> **Want to take over?** If you're interested in maintaining this project, please open an issue and ping [@hadim](https://github.com/hadim).
+
 [release-badge]: https://img.shields.io/github/v/release/hadim/feedrattler?logo=github
 [conda-badge]: https://anaconda.org/conda-forge/feedrattler/badges/version.svg?cache-control=no-cache
 [conda-downloads-badge]: https://anaconda.org/conda-forge/feedrattler/badges/downloads.svg?cache-control=no-cache
